@@ -1,0 +1,9 @@
+{
+    "user": "dev",
+    "password": "Development",
+    "server": "localhost:3306",
+    "database": "projetofinalapp",
+    "options": {
+      "enableArithAbort": true
+    }
+}
