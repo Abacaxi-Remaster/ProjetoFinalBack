@@ -78,3 +78,5 @@ export function criaTreinamentos (objeto: Treinamentos){
     objeto.comeco_fim_treinamento + "\",\"" + objeto.qntd_max_insc + "\",\"" + objeto.qntd_min_insc + "\");";
     return comando;
 } 
+
+  

@@ -3,6 +3,7 @@ import cors from 'cors'
 import bodyParser from 'body-parser';
 import { criaAluno, criarConexao, criaEmpresas, criaProfessores } from './database';
 
+
 var connection = criarConexao();
 
 // Porta do servidor
@@ -15,7 +16,7 @@ const app = express()
 app.use(bodyParser.json());
 // Endpoint raiz
 app.get('/', (req, res) => {
-    var sql = "SELECT * FROM alunos where nome = \"luis\" ";
+    let sql = "SELECT * FROM alunos";
     connection.query(sql, function(err, results){
         if (err) throw err;
         res.send(results);
@@ -39,6 +40,7 @@ app.post('/login', (req, res) => {
 app.post('/cadastro', (req, res) => {
     var body = req.body;
     var comando : any;
+
     // analisa qual usuario sera criado
     switch(body.usuario)
     {
@@ -58,7 +60,6 @@ app.post('/cadastro', (req, res) => {
         res.send(results);
     });   
 })
-
 
 //Base que vou usar para fazer o Treinamento
 app.post('/teste', (req, res) => {
