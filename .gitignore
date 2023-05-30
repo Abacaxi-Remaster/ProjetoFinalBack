@@ -1,3 +1,6 @@
 *.js
-node_modules
+node_modules/*
 dataBaseTables
+.vscode
+dist/*
+!dist/connection.json
