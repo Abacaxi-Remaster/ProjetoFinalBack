@@ -7,4 +7,3 @@ export function readJSONFile() {
     const jsonData = JSON.parse(arquivoLido);
     return jsonData;
 }
-

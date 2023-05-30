@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
-import { criaAluno, criarConexao, criaEmpresas, criaProfessores } from './database';
+import { criaAluno, criarConexao, criaEmpresas, criaMentores} from './database';
 
 
 var connection = criarConexao();
@@ -29,14 +29,33 @@ app.post('/login', (req, res) => {
     let comando = "SELECT * FROM " + body.usuario + " where email = \"" + body.email + "\" and senha = \"" + body.senha + "\"";
     console.log(comando);
     connection.query(comando, function(err, results){
-        if (err) throw err;
-        console.log(results); //precisa de [0], pq o "results" devolve uma array com todos os "rows" encontrados em forma de objeto, 
+        if (err)
+        {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau"); 
+        } 
+        //precisa de [0], pq o "results" devolve uma array com todos os "rows" encontrados em forma de objeto, 
         //como sempre sera apenas 1 usuario ou nenhum, usamos o index 0, para acessar o objeto enviado.
-        res.send(JSON.stringify(results[0])); // passamos o objeto para JSON e devolvemos.
+        else if (results[0] != null)
+        {
+            res.status(200); 
+            console.log(res.statusCode); 
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify(results[0])); // passamos o objeto para JSON e devolvemos.
+        }
+        else
+        {            
+            res.status(204); 
+            res.set('Content-Type', 'application/json');
+            res.send("Usuário não encontrado, confira senha e email!");
+            //console.log(res.statusMessage);
+            //res.status(400);    
+            //res.send(JSON.stringify(results));
+        }
     });    
 })
-
-//Sucesso
+//Sucesso       
 app.post('/cadastro', (req, res) => {
     var body = req.body;
     var comando : any;
@@ -50,26 +69,27 @@ app.post('/cadastro', (req, res) => {
         case "empresas":         
             comando = criaEmpresas(body);
         break;
-        case "professores": 
-            comando = criaProfessores(body);   
+        case "Mentor": 
+            comando = criaMentores(body);   
         break; 
     }
     console.log(comando);
     connection.query(comando, function(err, results){
         if (err) throw err;
+        console.log(results.insertId);
         res.send(results);
     });   
 })
 
 //Base que vou usar para fazer o Treinamento
-app.post('/teste', (req, res) => {
+app.post('/treinamentos', (req, res) => {
     var body = req.body;
     console.log(body);
     let comando = "SELECT * FROM " + body.usuario + " where senha = \"" + body.senha + "\"";
     console.log(comando);
     connection.query(comando, function(err, results){
         if (err) throw err;
-        console.log(results.count()); // da no console o numero de elementos passados 
+        console.log(results); // da no console o numero de elementos passados 
         res.send(JSON.stringify(results)); 
     });    
 })

@@ -33,7 +33,7 @@ interface empresas
     "nome": string
 }
 
-interface professores 
+interface mentores 
 {
     "id": number,
     "email": string,
@@ -42,7 +42,7 @@ interface professores
     "nome": string
 }
 
-interface Treinamentos 
+interface treinamentos 
 {
     "id": number,
     "nome_comercial": string,
@@ -52,7 +52,7 @@ interface Treinamentos
     "comeco_fim_treinamento": string,
     "qntd_min_insc": number,
     "qntd_max_insc": number,
-  }
+}
 
 export function criaAluno(objeto : alunos){
     var comando = "INSERT INTO alunos (id, nome,senha,email,nicho) values (0,\"" +
@@ -66,13 +66,13 @@ export function criaEmpresas(objeto : empresas){
     return comando;
 }
 
-export function criaProfessores(objeto : professores){
+export function criaMentores(objeto : mentores){
     var comando = "INSERT INTO professores (id,nome,senha,email,CPF) values (0,\"" +
     objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.CPF + "\");";
     return comando;
 }
 
-export function criaTreinamentos (objeto: Treinamentos){
+export function criaTreinamentos (objeto: treinamentos){
     var comando = "INSERT INTO treinamentos (id, nome_comercial, descricao, carga_horaria, comeco_fim_insc, comeco_fim_treinamento, qntd_min_insc, qntd_max_insc)"  
     "values (0,\"" + objeto.nome_comercial +"\",\"" + objeto.descricao + "\",\"" + objeto.carga_horaria + "\",\"" + objeto.comeco_fim_insc + "\",\"" + 
     objeto.comeco_fim_treinamento + "\",\"" + objeto.qntd_max_insc + "\",\"" + objeto.qntd_min_insc + "\");";
