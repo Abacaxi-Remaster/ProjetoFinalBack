@@ -45,10 +45,25 @@ interface treinamentos
     "nome_comercial": string,
     "descricao": string,
     "carga_horaria": number,
-    "comeco_fim_insc": string,
-    "comeco_fim_treinamento": string,
+    "comeco_insc": string,
+    "fim_insc": string,
+    "comeco_treinamento": string,
+    "fim_treinamento":string,
     "qntd_min_insc": number,
-    "qntd_max_insc": number,
+    "qntd_max_insc": number
+}
+
+interface quiz 
+{
+    "id": number,
+    "id_treinamento": number,
+    "enunciado": string,
+    "resposta": string,
+    "opcao_a": string,
+    "opcao_b": string,
+    "opcao_c": string,
+    "opcao_d": string,
+    "opcao_e": string
 }
 
 export function criaAluno(objeto : alunos){
@@ -70,10 +85,17 @@ export function criaMentores(objeto : mentores){
 }
 
 export function criaTreinamentos (objeto: treinamentos){
-    var comando = "INSERT INTO treinamentos (id, nome_comercial, descricao, carga_horaria, comeco_fim_insc, comeco_fim_treinamento, qntd_min_insc, qntd_max_insc)"  
-    "values (0,\"" + objeto.nome_comercial +"\",\"" + objeto.descricao + "\",\"" + objeto.carga_horaria + "\",\"" + objeto.comeco_fim_insc + "\",\"" + 
-    objeto.comeco_fim_treinamento + "\",\"" + objeto.qntd_max_insc + "\",\"" + objeto.qntd_min_insc + "\");";
+    var comando = "INSERT INTO treinamentos (id, nome_comercial, descricao, carga_horaria,comeco_insc,fim_insc,comeco_treinamento,fim_treinamento, qntd_min_insc, qntd_max_insc)"  
+    "values (0,\"" + objeto.nome_comercial +"\",\"" + objeto.descricao + "\",\"" + objeto.carga_horaria + "\",\"" + objeto.comeco_insc + "\",\"" + objeto.fim_insc + "\",\"" +
+    objeto.comeco_treinamento + "\",\""+objeto.fim_treinamento+"\",\"" + objeto.qntd_max_insc + "\",\"" + objeto.qntd_min_insc + "\");";
     return comando;
 } 
+
+export function criaQuiz(objeto: quiz){
+    var comando ="INSERT INTO Quiz (id, id_treinamento, enunciado, resposta, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e) " 
+    "values (0,\""+ objeto.id_treinamento + "\",\"" + objeto.enunciado + "\",\"" + objeto.resposta +"\",\"" + objeto.opcao_a +"\",\"" + objeto.opcao_b +"\",\"" 
+    + objeto.opcao_c +"\",\"" + objeto.opcao_d +"\",\"" + objeto.opcao_e +"\" );";
+    return comando;
+}
 
   
