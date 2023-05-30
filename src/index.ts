@@ -46,9 +46,8 @@ app.post('/login', (req, res) => {
         }
         else
         {            
-            res.status(204); 
             res.set('Content-Type', 'application/json');
-            res.send("Usuário não encontrado, confira senha e email!");
+            res.status(204).send("Usuário não encontrado, confira senha e email!");
             //console.log(res.statusMessage);
             //res.status(400);    
             //res.send(JSON.stringify(results));

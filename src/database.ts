@@ -17,7 +17,6 @@ export function criarConexao() {
 
 interface alunos 
 {
-    "id": number,
     "email": string,
     "senha": string,
     "nicho": string,
@@ -26,7 +25,6 @@ interface alunos
 
 interface empresas 
 {
-    "id": number,
     "email": string,
     "senha": string,
     "CNPJ": number,
@@ -35,7 +33,6 @@ interface empresas
 
 interface mentores 
 {
-    "id": number,
     "email": string,
     "senha": string,
     "CPF": number,
@@ -55,19 +52,19 @@ interface treinamentos
 }
 
 export function criaAluno(objeto : alunos){
-    var comando = "INSERT INTO alunos (id, nome,senha,email,nicho) values (0,\"" +
+    var comando = "INSERT INTO alunos (nome,senha,email,nicho) values (\"" +
     objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.nicho + "\");";
     return comando;
 }
 
 export function criaEmpresas(objeto : empresas){
-    var comando = "INSERT INTO empresas (id,nome,senha,email,CNPJ) values (0,\"" +
+    var comando = "INSERT INTO empresas (nome,senha,email,CNPJ) values (\"" +
     objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.CNPJ + "\");";
     return comando;
 }
 
 export function criaMentores(objeto : mentores){
-    var comando = "INSERT INTO professores (id,nome,senha,email,CPF) values (0,\"" +
+    var comando = "INSERT INTO professores (nome,senha,email,CPF) values (\"" +
     objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.CPF + "\");";
     return comando;
 }
