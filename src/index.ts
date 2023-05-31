@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
-import { criaAluno, criarConexao, criaEmpresas, criaMentores} from './database';
+import { criaAluno, criarConexao, criaEmpresas, criaMentores, criaTreinamentos} from './database';
 
 
 var connection = criarConexao();
@@ -41,6 +41,7 @@ app.post('/login', (req, res) => {
         {
             res.status(200); 
             console.log(res.statusCode); 
+            console.log(results.length);
             res.set('Content-Type', 'application/json');
             res.send(JSON.stringify(results[0])); // passamos o objeto para JSON e devolvemos.
         }
@@ -48,9 +49,6 @@ app.post('/login', (req, res) => {
         {            
             res.set('Content-Type', 'application/json');
             res.status(204).send("Usuário não encontrado, confira senha e email!");
-            //console.log(res.statusMessage);
-            //res.status(400);    
-            //res.send(JSON.stringify(results));
         }
     });    
 })
@@ -68,13 +66,25 @@ app.post('/cadastro', (req, res) => {
         case "empresas":         
             comando = criaEmpresas(body);
         break;
-        case "Mentor": 
+        case "mentores": 
             comando = criaMentores(body);   
         break; 
     }
     console.log(comando);
     connection.query(comando, function(err, results){
-        if (err) throw err;
+        if (err)
+        {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau"); 
+        } 
+        else if(results.insertId != 0)
+        {
+            res.status(200); 
+            console.log(res.statusCode); 
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
         console.log(results.insertId);
         res.send(results);
     });   
@@ -84,11 +94,11 @@ app.post('/cadastro', (req, res) => {
 app.post('/treinamentos', (req, res) => {
     var body = req.body;
     console.log(body);
-    let comando = "SELECT * FROM " + body.usuario + " where senha = \"" + body.senha + "\"";
+    var comando = criaTreinamentos(body);
     console.log(comando);
     connection.query(comando, function(err, results){
         if (err) throw err;
-        console.log(results); // da no console o numero de elementos passados 
+        console.log(results.insertId); // da no console o numero de elementos passados 
         res.send(JSON.stringify(results)); 
     });    
 })

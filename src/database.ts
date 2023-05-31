@@ -19,7 +19,7 @@ interface alunos
 {
     "email": string,
     "senha": string,
-    "nicho": string,
+    "curso": string,
     "nome": string
 }
 
@@ -67,8 +67,8 @@ interface quiz
 }
 
 export function criaAluno(objeto : alunos){
-    var comando = "INSERT INTO alunos (nome,senha,email,nicho) values (\"" +
-    objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.nicho + "\");";
+    var comando = "INSERT INTO alunos (nome,senha,email,curso) values (\"" +
+    objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.curso + "\");";
     return comando;
 }
 
@@ -79,15 +79,15 @@ export function criaEmpresas(objeto : empresas){
 }
 
 export function criaMentores(objeto : mentores){
-    var comando = "INSERT INTO professores (nome,senha,email,CPF) values (\"" +
+    var comando = "INSERT INTO mentores (nome,senha,email,CPF) values (\"" +
     objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.CPF + "\");";
     return comando;
 }
 
 export function criaTreinamentos (objeto: treinamentos){
-    var comando = "INSERT INTO treinamentos (id, nome_comercial, descricao, carga_horaria,comeco_insc,fim_insc,comeco_treinamento,fim_treinamento, qntd_min_insc, qntd_max_insc)"  
-    "values (0,\"" + objeto.nome_comercial +"\",\"" + objeto.descricao + "\",\"" + objeto.carga_horaria + "\",\"" + objeto.comeco_insc + "\",\"" + objeto.fim_insc + "\",\"" +
-    objeto.comeco_treinamento + "\",\""+objeto.fim_treinamento+"\",\"" + objeto.qntd_max_insc + "\",\"" + objeto.qntd_min_insc + "\");";
+    var comando = "INSERT INTO treinamentos (id, nome_comercial, descricao, carga_horaria,comeco_insc,fim_insc,comeco_treinamento,fim_treinamento, qntd_min_insc," +
+    "qntd_max_insc) values (0,\"" + objeto.nome_comercial +"\",\"" + objeto.descricao + "\",\"" + objeto.carga_horaria + "\",\"" + objeto.comeco_insc + "\",\"" + 
+    objeto.fim_insc + "\",\"" +  objeto.comeco_treinamento + "\",\""+objeto.fim_treinamento+"\",\"" + objeto.qntd_max_insc + "\",\"" + objeto.qntd_min_insc + "\");";
     return comando;
 } 
 
