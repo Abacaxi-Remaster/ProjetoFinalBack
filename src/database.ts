@@ -71,7 +71,7 @@ export function pegaTreinamentosAlunos(id_aluno: String) {
 }
 
 /// prototipo do post treinamentos_alunos
-export function criaTreinamentosAlunos(id_aluno: String, id_treinamentos: String) {
+export function inserirTreinamentosAlunos(id_aluno: String, id_treinamentos: String) {
     let comando = "INSERT INTO treinamentos_alunos (id_aluno, id_treinamentos, status) values (\"" + id_aluno + "\",\"" + id_treinamentos + "\",\"c\" );";
     return comando;
 }
@@ -84,7 +84,7 @@ export function pegaHistoricoAlunos(id_aluno: String) {
 
 /// prototipo do post historico_alunos
 //Falta so conferir como vamos passar os parametros
-export function criaHistoricoAlunos(objeto: historicoAlunos) {
+export function inserirHistoricoAlunos(objeto: historicoAlunos) {
     let comando = "INSERT INTO historico_alunos (id_aluno, id_quiz, nota) values (\"" + objeto.id_aluno + "\",\"" + objeto.id_quiz + "\",\"" + objeto.nota + "\" );";
     return comando;
 }
