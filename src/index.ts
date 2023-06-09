@@ -1,7 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
-import { criaAluno, criarConexao, criaEmpresas, criaMentores, criaTreinamentos, criaQuiz, criaQuestao, pegaHistorico} from './database';
+import { criaAluno, criarConexao, criaEmpresas, criaMentores, criaTreinamentos, criaQuiz, criaQuestao, pegaHistoricoAlunos, 
+criaVagasdeEmprego, pegaVagasdeEmprego, inscricaoAlunosVagas, pegaAlunosVagas, pegaVagasdeEmpregoAluno} from './database';
 
 
 var connection = criarConexao();
@@ -41,7 +42,7 @@ app.post('/login', (req, res) => {
         {
             res.status(200); 
             console.log(res.statusCode); 
-            console.log(results.length);
+            console.log(results[0]);
             res.set('Content-Type', 'application/json');
             res.send(JSON.stringify(results[0])); // passamos o objeto para JSON e devolvemos.
         }
@@ -72,12 +73,19 @@ app.post('/cadastro', (req, res) => {
     }
     console.log(comando);
     connection.query(comando, function(err, results){
+        console.log(err);
+        console.log(results);
         if (err)
         {
             res.status(400);
             res.set('Content-Type', 'application/json');
             res.send("Deu pau"); 
         } 
+        else
+        {
+            res.status(200); 
+            res.send(JSON.stringify("Deu certo!"));
+        }
         // else if(results[0].insertId != 0)
         // {
         //     res.status(200); 
@@ -86,8 +94,7 @@ app.post('/cadastro', (req, res) => {
         //     res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
         // }
         //console.log(results.insertId);
-        res.status(200); 
-        res.send(JSON.stringify("Deu certo!"));
+
     });   
 })
 
@@ -100,7 +107,7 @@ app.post('/treinamentos', (req, res) => {
         if (err) throw err; 
         console.log(results);
     }); 
-
+// array 
     for(const quiz of body.quiz)
     {
         let dadosQuiz = criaQuiz(dadosTreinamentos[0]);
@@ -123,16 +130,120 @@ app.post('/treinamentos', (req, res) => {
     res.send("Foi");
 })
 
-app.post('/historico_aluno', (req, res) => {
+/// prototipo do get historico_alunos
+app.get('/historico_alunos', (req, res) => {
     let body = req.body;
-    const dadosHistorico = pegaHistorico(body.id);
+    const dadosHistorico = pegaHistoricoAlunos(body.id_aluno);
     console.log(dadosHistorico);
     connection.query(dadosHistorico, function(err, results){
         if (err) throw err; 
-        console.log(results);
+        console.log(results.body);
     }); 
 })
 
+//Sucesso 
+app.post('/vagas/cadastro', (req, res) => {
+    let body = req.body;
+    console.log(body);
+    let comando = criaVagasdeEmprego(body);
+    console.log(comando);
+    connection.query(comando, function(err, results){
+        console.log(err);
+        console.log(results);
+        if (err)
+        {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau"); 
+        } 
+        else
+        {
+            res.status(200); 
+            res.send(JSON.stringify("Deu certo!"));
+        }
+    });    
+})
+
+app.get('/vagas', (req, res) => {
+    let body = req.body;
+    const dadosHistorico = pegaVagasdeEmprego();
+    console.log(dadosHistorico);
+    connection.query(dadosHistorico, function(err, results){
+        if (err)
+        {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau"); 
+        } 
+        else
+        {
+            res.status(200); 
+            console.log(res.statusCode); 
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
+    }); 
+})
+
+
+app.post('/vagas/inscricao', (req, res) => {
+    let body = req.body;
+    const dadosHistorico = inscricaoAlunosVagas(body.id_aluno, body.id_vaga);
+    console.log(dadosHistorico);
+    connection.query(dadosHistorico, function(err, results){
+        if (err)
+        {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau"); 
+        } 
+        else
+        {
+            res.status(200); 
+            console.log(res.statusCode); 
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
+    }); 
+})
+
+//Sucesso
+app.get('/vagas/inscrito', (req, res) => {
+    let body = req.body;
+    const comando = pegaAlunosVagas(body.id_aluno);
+    console.log(comando);
+    connection.query(comando, function(err, results){
+        if (err)
+        {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau"); 
+        } 
+        else
+        {
+            let vagasInscritas: any[] = [];
+            for (const vagas_de_emprego of results)
+            {
+                console.log(vagas_de_emprego);
+                const comando2 = pegaVagasdeEmpregoAluno(vagas_de_emprego.id_vaga);
+                console.log(comando2);
+                connection.query(comando2, function(err, results){
+                    if (err) throw err;
+                    else
+                    {
+                        let objeto = JSON.stringify(results[0]);
+
+                        vagasInscritas.push(objeto);  
+                    }
+                });          
+            }
+            console.log(vagasInscritas);
+            res.status(200); 
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify(vagasInscritas)); // passamos o objeto para JSON e devolvemos.
+        }
+    }); 
+})
 
 // Cors
 app.use(cors({
