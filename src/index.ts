@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 // Endpoint raiz
 app.get('/', (req, res) => {
     let sql = "SELECT * FROM alunos";
-    connection.query(sql, function(err, results){
+    connection.query(sql, function(err: any, results: any){
         if (err) throw err;
         res.send(results);
     });
@@ -28,7 +28,7 @@ app.post('/login', (req, res) => {
     console.log(body);
     let comando = "SELECT * FROM " + body.usuario + " where email = \"" + body.email + "\" and senha = \"" + body.senha + "\"";
     console.log(comando);
-    connection.query(comando, function(err, results){
+    connection.query(comando, function(err: any, results: string | any[]){
         if (err)
         {
             res.status(400);
@@ -71,7 +71,7 @@ app.post('/cadastro', (req, res) => {
         break; 
     }
     console.log(comando);
-    connection.query(comando, function(err, results){
+    connection.query(comando, function(err: any, results: any){
         if (err)
         {
             res.status(400);
@@ -96,7 +96,7 @@ app.post('/treinamentos', (req, res) => {
     let body = req.body;
     const dadosTreinamentos = criaTreinamentos(body.treinamentos);
     console.log(dadosTreinamentos);
-    connection.query(dadosTreinamentos[1], function(err, results){
+    connection.query(dadosTreinamentos[1], function(err: any, results: any){
         if (err) throw err; 
         console.log(results);
     }); 
@@ -104,7 +104,7 @@ app.post('/treinamentos', (req, res) => {
     for(const quiz of body.quiz)
     {
         let dadosQuiz = criaQuiz(dadosTreinamentos[0]);
-        connection.query(dadosQuiz[1], function(err, results){
+        connection.query(dadosQuiz[1], function(err: any, results: any){
             if (err) throw err; 
             console.log(results);
         }); 
@@ -113,7 +113,7 @@ app.post('/treinamentos', (req, res) => {
             let dadosQuestao = criaQuestao(questao, dadosQuiz[0]);
             console.log(dadosQuestao);
             console.log("\n");
-            connection.query(dadosQuestao, function(err, results){
+            connection.query(dadosQuestao, function(err: any, results: any){
                 if (err) throw err; 
                 console.log(results);
             }); 
@@ -127,7 +127,7 @@ app.post('/historico_aluno', (req, res) => {
     let body = req.body;
     const dadosHistorico = pegaHistorico(body.id);
     console.log(dadosHistorico);
-    connection.query(dadosHistorico, function(err, results){
+    connection.query(dadosHistorico, function(err: any, results: any){
         if (err) throw err; 
         console.log(results);
     }); 
