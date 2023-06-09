@@ -33,7 +33,7 @@ app.post('/login', (req, res) => {
         {
             res.status(400);
             res.set('Content-Type', 'application/json');
-            res.send("Deu pau"); 
+            res.send("LOGIN_FAILED"); 
         } 
         //precisa de [0], pq o "results" devolve uma array com todos os "rows" encontrados em forma de objeto, 
         //como sempre sera apenas 1 usuario ou nenhum, usamos o index 0, para acessar o objeto enviado.
@@ -48,7 +48,7 @@ app.post('/login', (req, res) => {
         else
         {            
             res.set('Content-Type', 'application/json');
-            res.status(204).send("Usuário não encontrado, confira senha e email!");
+            res.status(204).send("USER_NOT_FOUND");
         }
     });    
 })
@@ -76,7 +76,7 @@ app.post('/cadastro', (req, res) => {
         {
             res.status(400);
             res.set('Content-Type', 'application/json');
-            res.send("Deu pau"); 
+            res.send("REGISTER_FAILED"); 
         } 
         // else if(results[0].insertId != 0)
         // {
@@ -87,7 +87,7 @@ app.post('/cadastro', (req, res) => {
         // }
         //console.log(results.insertId);
         res.status(200); 
-        res.send(JSON.stringify("Deu certo!"));
+        res.send(JSON.stringify("REGISTER_SUCCESS"));
     });   
 })
 
