@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
-import { criaAluno, criarConexao, criaEmpresas, criaMentores, criaTreinamentos, criaQuiz, criaQuestao, pegaHistorico} from './database';
+import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, inserirQuestao, pegaHistorico} from './database';
 
 
 var connection = criarConexao();
@@ -61,13 +61,13 @@ app.post('/cadastro', (req, res) => {
     switch(body.usuario)
     {
         case "alunos": 
-            comando = criaAluno(body);
+            comando = inserirAluno(body);
         break;
         case "empresas":         
-            comando = criaEmpresas(body);
+            comando = inserirEmpresas(body);
         break;
         case "mentores": 
-            comando = criaMentores(body);   
+            comando = inserirMentores(body);   
         break; 
     }
     console.log(comando);
@@ -94,7 +94,7 @@ app.post('/cadastro', (req, res) => {
 //Sucesso
 app.post('/treinamentos', (req, res) => {
     let body = req.body;
-    const dadosTreinamentos = criaTreinamentos(body.treinamentos);
+    const dadosTreinamentos = inserirTreinamentos(body.treinamentos);
     console.log(dadosTreinamentos);
     connection.query(dadosTreinamentos[1], function(err: any, results: any){
         if (err) throw err; 
@@ -103,14 +103,14 @@ app.post('/treinamentos', (req, res) => {
 
     for(const quiz of body.quiz)
     {
-        let dadosQuiz = criaQuiz(dadosTreinamentos[0]);
+        let dadosQuiz = inserirQuiz(dadosTreinamentos[0]);
         connection.query(dadosQuiz[1], function(err: any, results: any){
             if (err) throw err; 
             console.log(results);
         }); 
         for(const questao of quiz)
         {
-            let dadosQuestao = criaQuestao(questao, dadosQuiz[0]);
+            let dadosQuestao = inserirQuestao(questao, dadosQuiz[0]);
             console.log(dadosQuestao);
             console.log("\n");
             connection.query(dadosQuestao, function(err: any, results: any){

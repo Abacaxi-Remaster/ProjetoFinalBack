@@ -20,25 +20,25 @@ export function criarConexao() {
     return connection;
 }
 
-export function criaAluno(objeto: alunos) {
+export function inserirAluno(objeto: alunos) {
     let comando = "INSERT INTO alunos (id,nome,senha,email,curso) values (\"" + uuid.v4() + "\", \"" +
         objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.curso + "\");";
     return comando;
 }
 
-export function criaEmpresas(objeto: empresas) {
+export function inserirEmpresas(objeto: empresas) {
     let comando = "INSERT INTO empresas (id,nome,senha,email,CNPJ) values (\"" + uuid.v4() + "\", \"" +
         objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.CNPJ + "\");";
     return comando;
 }
 
-export function criaMentores(objeto: mentores) {
+export function inserirMentores(objeto: mentores) {
     let comando = "INSERT INTO mentores (id, nome,senha,email,CPF) values (\"" + uuid.v4() + "\", \"" +
         objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.CPF + "\");";
     return comando;
 }
 
-export function criaTreinamentos(objeto: treinamentos) {
+export function inserirTreinamentos(objeto: treinamentos) {
     let id = uuid.v4();
     let comando = "INSERT INTO treinamentos (id, nome_comercial, descricao, carga_horaria,comeco_insc,fim_insc,comeco_treinamento,fim_treinamento, qntd_min_insc," +
         "qntd_max_insc) values (\"" + id + "\", \"" + objeto.nome_comercial + "\",\"" + objeto.descricao + "\",\"" + objeto.carga_horaria + "\",\"" + objeto.comeco_insc + "\",\"" +
@@ -46,20 +46,18 @@ export function criaTreinamentos(objeto: treinamentos) {
     return [id, comando];
 }
 
-export function criaQuiz(id_treinamentos: String) {
+export function inserirQuiz(id_treinamentos: String) {
     let id = uuid.v4();
     let comando = "INSERT INTO quiz (id, id_treinamentos) values (\"" + id + "\",\"" + id_treinamentos + "\" );";
     return [id, comando];
 }
 
-export function criaQuestao(objeto: questao, id_quiz: String) {
+export function inserirQuestao(objeto: questao, id_quiz: String) {
     let comando = "INSERT INTO questao (id, id_quiz, enunciado, resposta, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e) " +
         "values (\"" + uuid.v4() + "\", \"" + id_quiz + "\",\"" + objeto.enunciado + "\",\"" + objeto.resposta + "\",\"" + objeto.opcao_a + "\",\"" + objeto.opcao_b + "\",\""
         + objeto.opcao_c + "\",\"" + objeto.opcao_d + "\",\"" + objeto.opcao_e + "\" );";
     return comando;
 }
-
-
 
 export function pegaHistorico(id_aluno: String) {
     let comando = "SELECT * FROM historico_aluno where id_aluno = \"" + id_aluno + "\"";
