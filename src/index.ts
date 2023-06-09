@@ -1,7 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
-import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaVagasdeEmprego, inscricaoAlunosVagas, pegaAlunosVagas, pegaVagasdeEmpregoAluno } from './database';
+import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, inserirQuestao, pegaHistoricoAlunos, 
+    criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, pegaAlunoVagas, pegaVagasdeEmprego, pegaVagaAlunos} from './database';
 
 
 
@@ -38,11 +39,8 @@ app.post('/login', (req, res) => {
         //precisa de [0], pq o "results" devolve uma array com todos os "rows" encontrados em forma de objeto, 
         //como sempre sera apenas 1 usuario ou nenhum, usamos o index 0, para acessar o objeto enviado.
         else if (results[0] != null) {
-            res.status(200);
-            console.log(res.statusCode);
-            console.log(results[0]);
             res.set('Content-Type', 'application/json');
-            res.send(JSON.stringify(results[0])); // passamos o objeto para JSON e devolvemos.
+            res.status(200).send(JSON.stringify(results[0])); // passamos o objeto para JSON e devolvemos.
         }
         else {
             res.set('Content-Type', 'application/json');
@@ -50,6 +48,7 @@ app.post('/login', (req, res) => {
         }
     });
 })
+
 //Sucesso       
 app.post('/cadastro', (req, res) => {
     let body = req.body;
@@ -153,7 +152,7 @@ app.post('/vagas/cadastro', (req, res) => {
 
 app.get('/vagas', (req, res) => {
     let body = req.body;
-    const dadosHistorico = pegaVagasdeEmprego();
+    const dadosHistorico = pegaTodasVagasdeEmprego();
     console.log(dadosHistorico);
     connection.query(dadosHistorico, function (err, results) {
         if (err) {
@@ -193,33 +192,57 @@ app.post('/vagas/inscricao', (req, res) => {
 //Sucesso
 app.get('/vagas/inscrito', (req, res) => {
     let body = req.body;
-    const comando = pegaAlunosVagas(body.id_aluno);
+    const comando = pegaAlunoVagas(body.id_aluno);
     console.log(comando);
     connection.query(comando, function (err, results) {
         if (err) {
+            console.log(err);
             res.status(400);
             res.set('Content-Type', 'application/json');
             res.send("Deu pau");
-        }
-        else {
-            let vagasInscritas: any[] = [];
-            for (const vagas_de_emprego of results) {
-                console.log(vagas_de_emprego);
-                const comando2 = pegaVagasdeEmpregoAluno(vagas_de_emprego.id_vaga);
-                console.log(comando2);
-                connection.query(comando2, function (err, results) {
-                    if (err) throw err;
-                    else {
-                        let objeto = JSON.stringify(results[0]);
-
-                        vagasInscritas.push(objeto);
-                    }
-                });
-            }
-            console.log(vagasInscritas);
+        } else {
+            console.log(results);
             res.status(200);
             res.set('Content-Type', 'application/json');
-            res.send(JSON.stringify(vagasInscritas)); // passamos o objeto para JSON e devolvemos.
+            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
+    });
+})
+
+//Pega todos os alunos inscritos em cada vaga 
+app.get('/vagas/todosInscrito', (req, res) => {
+    let body = req.body;
+    const comando = pegaVagasdeEmprego(body.id_empresa);
+    console.log(comando);
+    connection.query(comando, function (err, results) {
+        if (err) {
+            console.log(err);
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau");
+        } else {
+            let alunosVaga : any = []
+            for (let vaga of results)
+            {
+                let comando2 = pegaVagaAlunos(vaga.id);
+                console.log(comando2);
+                connection.query(comando2, function (err, results) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        for (let aluno of results)
+                        {
+                            console.log(aluno.nome);
+                            alunosVaga.push(aluno.nome);
+                        }
+                    }
+                });
+            }        
+            for (let item of alunosVaga)
+            {
+                console.log(item);
+            }
+            res.send(JSON.stringify(alunosVaga));
         }
     });
 })

@@ -1,4 +1,3 @@
-import exp from 'constants';
 import mysql from 'mysql'
 const uuid = require("uuid")
 import { readJSONFile } from './leitordeJSON';
@@ -41,6 +40,7 @@ export function inserirMentores(objeto: mentores) {
     return comando;
 }
 
+//inseri o treinamento e o seus dados na tabela treinamentos
 export function inserirTreinamentos(objeto: treinamentos) {
     let id = uuid.v4();
     let comando = "INSERT INTO treinamentos (id, nome_comercial, descricao, carga_horaria,comeco_insc,fim_insc,comeco_treinamento,fim_treinamento, qntd_min_insc," +
@@ -64,15 +64,15 @@ export function inserirQuestao(objeto: questao, id_quiz: String) {
     return comando;
 }
 
-/// prototipo do get treinamentos_alunos
+/// prototipo do get treinamentos_alunos -- get
 export function pegaTreinamentosAlunos(id_aluno: String) {
     let comando = "SELECT * FROM treinamentos_alunos where id_aluno = \"" + id_aluno + "\"";
     return comando;
 }
 
-/// prototipo do post treinamentos_alunos
+/// prototipo do post treinamentos_alunos -- post
 export function criaTreinamentosAlunos(id_aluno: String, id_treinamentos: String) {
-    let comando = "INSERT INTO treinamentos_alunos (id_aluno, id_treinamentos, status) values (\"" + id_aluno + "\",\"" + id_treinamentos + "\",\"c\" );";
+    let comando = "INSERT INTO treinamentos_alunos (id_aluno, id_treinamentos, situacao) values (\"" + id_aluno + "\",\"" + id_treinamentos + "\",\"c\" );";
     return comando;
 }
 
@@ -84,20 +84,20 @@ export function pegaHistoricoAlunos(id_aluno: String) {
 
 /// prototipo do post historico_alunos
 //Falta so conferir como vamos passar os parametros
-export function criaHistoricoAlunos(objeto: historicoAlunos) {
+export function inserirHistoricoAlunos(objeto: historicoAlunos) {
     let comando = "INSERT INTO historico_alunos (id_aluno, id_quiz, nota) values (\"" + objeto.id_aluno + "\",\"" + objeto.id_quiz + "\",\"" + objeto.nota + "\" );";
     return comando;
 }
 
 //Cria a vaga de emprego
 export function criaVagasdeEmprego(objeto: vagasEmprego) {
-    let comando = "INSERT INTO vagas_de_emprego (id, id_empresa, titulo_vaga, descricao, requesitos, salario) values (\"" + uuid.v4() + "\",\"" + objeto.id_empresa + "\",\""
-        + objeto.titulo_vaga + "\",\"" + objeto.descricao + "\",\"" + objeto.requesitos + "\",\"" + objeto.salario + "\" );";
+    let comando = "INSERT INTO vagas_de_emprego (id, id_empresa, titulo_vaga, descricao, requisitos, salario) values (\"" + uuid.v4() + "\",\"" + objeto.id_empresa + "\",\""
+        + objeto.titulo_vaga + "\",\"" + objeto.descricao + "\",\"" + objeto.requisitos + "\",\"" + objeto.salario + "\" );";
     return comando;
 }
 
 //Pega a vaga de emprego, para mostrar para os usuarios
-export function pegaVagasdeEmprego() {
+export function pegaTodasVagasdeEmprego() {
     let comando = "SELECT * FROM vagas_de_emprego";
     return comando;
 }
@@ -109,12 +109,19 @@ export function inscricaoAlunosVagas(id_aluno: string, id_vaga: string) {
 }
 
 // Mostra as vagas que o aluno está inscrito
-export function pegaAlunosVagas(id_aluno: string) {
-    let comando = "SELECT * FROM alunos_vagas where id_aluno = \"" + id_aluno + "\"";
+export function pegaAlunoVagas(id_aluno : string){
+    let comando = "SELECT * FROM vagas_de_emprego where id IN (SELECT id_vaga FROM alunos_vagas where id_aluno = \"" + id_aluno + "\");";
     return comando;
 }
 
-export function pegaVagasdeEmpregoAluno(id_vaga: string) {
-    let comando = "SELECT * FROM vagas_de_emprego where id = \"" + id_vaga + "\"";
+//Pega todos os id's dos treinamentos de uma empresa
+export function pegaVagasdeEmprego(id_emperesa : string){
+    let comando = "SELECT id FROM vagas_de_emprego where id_empresa = \"" + id_emperesa + "\";";
+    return comando;
+}
+
+// Mostra as vagas que o aluno está inscrito
+export function pegaVagaAlunos(id_vaga : string){
+    let comando = "SELECT nome FROM alunos where id IN (SELECT id_aluno FROM alunos_vagas where id_vaga = \"" + id_vaga + "\");";
     return comando;
 }
