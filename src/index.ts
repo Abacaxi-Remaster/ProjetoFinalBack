@@ -1,8 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
-import { criaAluno, criarConexao, criaEmpresas, criaMentores, criaTreinamentos, criaQuiz, criaQuestao, pegaHistoricoAlunos, 
-criaVagasdeEmprego, pegaVagasdeEmprego, inscricaoAlunosVagas, pegaAlunosVagas, pegaVagasdeEmpregoAluno} from './database';
+import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaVagasdeEmprego, inscricaoAlunosVagas, pegaAlunosVagas, pegaVagasdeEmpregoAluno} from './database';
+
 
 
 var connection = criarConexao();
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 // Endpoint raiz
 app.get('/', (req, res) => {
     let sql = "SELECT * FROM alunos";
-    connection.query(sql, function(err, results){
+    connection.query(sql, function(err: any, results: any){
         if (err) throw err;
         res.send(results);
     });
@@ -29,12 +29,12 @@ app.post('/login', (req, res) => {
     console.log(body);
     let comando = "SELECT * FROM " + body.usuario + " where email = \"" + body.email + "\" and senha = \"" + body.senha + "\"";
     console.log(comando);
-    connection.query(comando, function(err, results){
+    connection.query(comando, function(err: any, results: string | any[]){
         if (err)
         {
             res.status(400);
             res.set('Content-Type', 'application/json');
-            res.send("Deu pau"); 
+            res.send("LOGIN_FAILED"); 
         } 
         //precisa de [0], pq o "results" devolve uma array com todos os "rows" encontrados em forma de objeto, 
         //como sempre sera apenas 1 usuario ou nenhum, usamos o index 0, para acessar o objeto enviado.
@@ -49,7 +49,7 @@ app.post('/login', (req, res) => {
         else
         {            
             res.set('Content-Type', 'application/json');
-            res.status(204).send("Usuário não encontrado, confira senha e email!");
+            res.status(204).send("USER_NOT_FOUND");
         }
     });    
 })
@@ -62,24 +62,22 @@ app.post('/cadastro', (req, res) => {
     switch(body.usuario)
     {
         case "alunos": 
-            comando = criaAluno(body);
+            comando = inserirAluno(body);
         break;
         case "empresas":         
-            comando = criaEmpresas(body);
+            comando = inserirEmpresas(body);
         break;
         case "mentores": 
-            comando = criaMentores(body);   
+            comando = inserirMentores(body);   
         break; 
     }
     console.log(comando);
-    connection.query(comando, function(err, results){
-        console.log(err);
-        console.log(results);
+    connection.query(comando, function(err: any, results: any){
         if (err)
         {
             res.status(400);
             res.set('Content-Type', 'application/json');
-            res.send("Deu pau"); 
+            res.send("REGISTER_FAILED"); 
         } 
         else
         {
@@ -94,33 +92,32 @@ app.post('/cadastro', (req, res) => {
         //     res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
         // }
         //console.log(results.insertId);
-
     });   
 })
 
 //Sucesso
 app.post('/treinamentos', (req, res) => {
     let body = req.body;
-    const dadosTreinamentos = criaTreinamentos(body.treinamentos);
+    const dadosTreinamentos = inserirTreinamentos(body.treinamentos);
     console.log(dadosTreinamentos);
-    connection.query(dadosTreinamentos[1], function(err, results){
+    connection.query(dadosTreinamentos[1], function(err: any, results: any){
         if (err) throw err; 
         console.log(results);
     }); 
 // array 
     for(const quiz of body.quiz)
     {
-        let dadosQuiz = criaQuiz(dadosTreinamentos[0]);
-        connection.query(dadosQuiz[1], function(err, results){
+        let dadosQuiz = inserirQuiz(dadosTreinamentos[0]);
+        connection.query(dadosQuiz[1], function(err: any, results: any){
             if (err) throw err; 
             console.log(results);
         }); 
         for(const questao of quiz)
         {
-            let dadosQuestao = criaQuestao(questao, dadosQuiz[0]);
+            let dadosQuestao = inserirQuestao(questao, dadosQuiz[0]);
             console.log(dadosQuestao);
             console.log("\n");
-            connection.query(dadosQuestao, function(err, results){
+            connection.query(dadosQuestao, function(err: any, results: any){
                 if (err) throw err; 
                 console.log(results);
             }); 
@@ -135,7 +132,7 @@ app.get('/historico_alunos', (req, res) => {
     let body = req.body;
     const dadosHistorico = pegaHistoricoAlunos(body.id_aluno);
     console.log(dadosHistorico);
-    connection.query(dadosHistorico, function(err, results){
+    connection.query(dadosHistorico, function(err: any, results: any){
         if (err) throw err; 
         console.log(results.body);
     }); 
