@@ -21,34 +21,37 @@ export function criarConexao() {
 }
 
 export function inserirAluno(objeto: alunos) {
-    let comando = "INSERT INTO alunos (id,nome,senha,email,curso) values (\"" + uuid.v4() + "\", \"" +
-        objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.curso + "\");";
+    let comando = "INSERT INTO alunos (id,nome,senha,email,curso) " +
+        "values (\"" + uuid.v4() + "\", \"" + objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.curso + "\");";
     return comando;
 }
 
 export function inserirEmpresas(objeto: empresas) {
-    let comando = "INSERT INTO empresas (id,nome,senha,email,CNPJ) values (\"" + uuid.v4() + "\", \"" +
+    let comando = "INSERT INTO empresas (id,nome,senha,email,CNPJ) " +
+        "values (\"" + uuid.v4() + "\", \"" +
         objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.CNPJ + "\");";
     return comando;
 }
 
 export function inserirMentores(objeto: mentores) {
-    let comando = "INSERT INTO mentores (id, nome,senha,email,CPF) values (\"" + uuid.v4() + "\", \"" +
-        objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.CPF + "\");";
+    let comando = "INSERT INTO mentores (id, nome,senha,email,CPF) " +
+        "values (\"" + uuid.v4() + "\", \"" + objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.CPF + "\");";
     return comando;
 }
 
 export function inserirTreinamentos(objeto: treinamentos) {
     let id = uuid.v4();
     let comando = "INSERT INTO treinamentos (id, nome_comercial, descricao, carga_horaria,comeco_insc,fim_insc,comeco_treinamento,fim_treinamento, qntd_min_insc," +
-        "qntd_max_insc) values (\"" + id + "\", \"" + objeto.nome_comercial + "\",\"" + objeto.descricao + "\",\"" + objeto.carga_horaria + "\",\"" + objeto.comeco_insc + "\",\"" +
+        "qntd_max_insc) " +
+        "values (\"" + id + "\", \"" + objeto.nome_comercial + "\",\"" + objeto.descricao + "\",\"" + objeto.carga_horaria + "\",\"" + objeto.comeco_insc + "\",\"" +
         objeto.fim_insc + "\",\"" + objeto.comeco_treinamento + "\",\"" + objeto.fim_treinamento + "\",\"" + objeto.qntd_max_insc + "\",\"" + objeto.qntd_min_insc + "\");";
     return [id, comando];
 }
 
 export function inserirQuiz(id_treinamentos: String) {
     let id = uuid.v4();
-    let comando = "INSERT INTO quiz (id, id_treinamentos) values (\"" + id + "\",\"" + id_treinamentos + "\" );";
+    let comando = "INSERT INTO quiz (id, id_treinamentos) " +
+        "values (\"" + id + "\",\"" + id_treinamentos + "\" );";
     return [id, comando];
 }
 
