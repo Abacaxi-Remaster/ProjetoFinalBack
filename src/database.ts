@@ -70,9 +70,9 @@ export function pegaTreinamentosAlunos(id_aluno: String) {
     return comando;
 }
 
-/// prototipo do post treinamentos_alunos -- post
-export function criaTreinamentosAlunos(id_aluno: String, id_treinamentos: String) {
-    let comando = "INSERT INTO treinamentos_alunos (id_aluno, id_treinamentos, situacao) values (\"" + id_aluno + "\",\"" + id_treinamentos + "\",\"c\" );";
+/// prototipo do post treinamentos_alunos
+export function inserirTreinamentosAlunos(id_aluno: String, id_treinamentos: String) {
+    let comando = "INSERT INTO treinamentos_alunos (id_aluno, id_treinamentos, status) values (\"" + id_aluno + "\",\"" + id_treinamentos + "\",\"c\" );";
     return comando;
 }
 

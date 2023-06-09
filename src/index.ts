@@ -2,8 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
 import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, inserirQuestao, pegaHistoricoAlunos, 
-    criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, pegaAlunoVagas, pegaVagasdeEmprego, pegaVagaAlunos} from './database';
-
+    criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, pegaAlunoVagas, pegaVagasdeEmprego, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos} from './database';
 
 
 var connection = criarConexao();
@@ -246,6 +245,47 @@ app.get('/vagas/todosInscrito', (req, res) => {
         }
     });
 })
+
+app.post('/entrar_treinamento', (req, res) => {
+    let body = req.body;
+    console.log(body);
+    let comando = inserirTreinamentosAlunos(body.id_aluno, body.id_treinamentos);
+    console.log(comando);
+    connection.query(comando, function (err: any, results: string | any[]) {
+        if (err) {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("ERRO_ENTRAR_TREINAMENTO");
+        }
+        res.status(200);
+        console.log(res.statusCode);
+        console.log(results[0]);
+        res.set('Content-Type', 'application/json');
+        res.send(JSON.stringify("Aluno inserido no treinamento")); // passamos o objeto para JSON e devolvemos.
+    });
+})
+
+app.get('/treinamento_aluno', (req, res) => {
+    let body = req.body;
+    console.log(body);
+    let comando = pegaTreinamentosAlunos(body.id_aluno);
+    console.log(comando);
+    connection.query(comando, function (err: any, results: string | any[]) {
+        if (err) {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("ERRO_BUSCAR_TREINAMENTOS");
+        }
+        res.status(200);
+        console.log(res.statusCode);
+        console.log(results[0]);
+        res.set('Content-Type', 'application/json');
+        res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+    });
+})
+
+
+
 
 // Cors
 app.use(cors({
