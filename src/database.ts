@@ -116,7 +116,7 @@ export function pegaAlunoVagas(id_aluno : string){
 
 //Pega todos os id's dos treinamentos de uma empresa
 export function pegaVagasdeEmprego(id_emperesa : string){
-    let comando = "SELECT id FROM vagas_de_emprego where id_empresa = \"" + id_emperesa + "\";";
+    let comando = "SELECT * FROM vagas_de_emprego where id_empresa = \"" + id_emperesa + "\";";
     return comando;
 }
 
