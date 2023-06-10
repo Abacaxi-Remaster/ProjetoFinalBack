@@ -21,6 +21,17 @@ export function criarConexao() {
     return connection;
 }
 
+
+export function procurarUsuario(objeto: any) {
+    let comando = "SELECT * FROM " + objeto.usuario + " where email = \"" + objeto.email + "\" and senha = \"" + objeto.senha + "\"";
+    return comando;
+}
+
+export function emailJaExiste(objeto: any) {
+    let comando = "SELECT * FROM " + objeto.usuario + " where email = \"" + objeto.email + "\"";
+    return comando;
+}
+
 export function inserirAluno(objeto: alunos) {
     let comando = "INSERT INTO alunos (id,nome,senha,email,curso) " +
         "values (\"" + uuid.v4() + "\", \"" + objeto.nome + "\", \"" + objeto.senha + "\", \"" + objeto.email + "\", \"" + objeto.curso + "\");";
@@ -66,7 +77,7 @@ export function inserirQuestao(objeto: questao, id_quiz: String) {
 
 /// prototipo do get treinamentos_alunos -- get
 export function pegaTreinamentosAlunos(id_aluno: String) {
-    let comando = "SELECT * FROM treinamentos_alunos where id_aluno = \"" + id_aluno + "\"";
+    let comando = "SELECT * FROM treinamentos where id IN (SELECT id_treinamento FROM treinamentos_alunos where id_aluno = \"" + id_aluno + "\")";
     return comando;
 }
 
@@ -123,5 +134,11 @@ export function pegaVagasdeEmprego(id_emperesa : string){
 // Mostra as vagas que o aluno está inscrito
 export function pegaVagaAlunos(id_vaga : string){
     let comando = "SELECT nome FROM alunos where id IN (SELECT id_aluno FROM alunos_vagas where id_vaga = \"" + id_vaga + "\");";
+    return comando;
+}
+
+// Mostra as vagas que o aluno está inscrito
+export function pegaTreinamentos(){
+    let comando = "SELECT * FROM treinamentos";
     return comando;
 }

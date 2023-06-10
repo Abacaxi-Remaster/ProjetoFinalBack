@@ -2,7 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
 import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, inserirQuestao, pegaHistoricoAlunos, 
-    criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, pegaAlunoVagas, pegaVagasdeEmprego, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos} from './database';
+    criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, emailJaExiste, pegaTreinamentos} from './database';
+import e from 'express';
 
 
 var connection = criarConexao();
@@ -26,8 +27,7 @@ app.get('/', (req, res) => {
 //Sucesso 
 app.post('/login', (req, res) => {
     let body = req.body;
-    console.log(body);
-    let comando = "SELECT * FROM " + body.usuario + " where email = \"" + body.email + "\" and senha = \"" + body.senha + "\"";
+    let comando = procurarUsuario(body);
     console.log(comando);
     connection.query(comando, function (err: any, results: string | any[]) {
         if (err) {
@@ -66,29 +66,38 @@ app.post('/cadastro', (req, res) => {
             break;
     }
     console.log(comando);
-    connection.query(comando, function (err: any, results: any) {
+
+    let comando2 = emailJaExiste(body);
+
+    connection.query(comando2, function (err: any, results: any) {
+        res.set('Content-Type', 'application/json');
         if (err) {
-            res.status(400);
-            res.set('Content-Type', 'application/json');
-            res.send("REGISTER_FAILED");
+            console.log("1");
+            res.status(400).send("Procura do email falhou");
+        }
+        else if(results[0] != null) {
+            console.log("2");
+            res.status(204).send(JSON.stringify("Email já existe"));
         }
         else {
-            res.status(200);
-            res.send(JSON.stringify("Deu certo!"));
+            connection.query(comando, function (err: any, results: any) {
+                res.set('Content-Type', 'application/json');
+                if (err) {
+                    console.log("3");
+                    res.status(400).send("REGISTER_FAILED");
+                }
+                else {
+                    console.log("4");
+                    console.log(results);
+                    res.status(200).send(JSON.stringify("Conta criada!"));
+                }
+            });
         }
-        // else if(results[0].insertId != 0)
-        // {
-        //     res.status(200); 
-        //     console.log(res.statusCode); 
-        //     res.set('Content-Type', 'application/json');
-        //     res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
-        // }
-        //console.log(results.insertId);
     });
 })
 
-//Sucesso
-app.post('/treinamentos', (req, res) => {
+//Insere os treinamentos, quizes e questöes
+app.post('/treinamentos/cadastro', (req, res) => {
     let body = req.body;
     const dadosTreinamentos = inserirTreinamentos(body.treinamentos);
     console.log(dadosTreinamentos);
@@ -113,11 +122,11 @@ app.post('/treinamentos', (req, res) => {
             });
         }
     }
-    res.status(200);
-    res.send("Foi");
+    res.set('Content-Type', 'application/json');
+    res.status(200).send("Foi");
 })
 
-/// prototipo do get historico_alunos
+///Devolve todo o histórico de um aluno
 app.get('/historico_alunos/:id', (req, res) => {
     let id_aluno = req.params.id;
     const dadosHistorico = pegaHistoricoAlunos(id_aluno);
@@ -128,7 +137,7 @@ app.get('/historico_alunos/:id', (req, res) => {
     });
 })
 
-//Sucesso 
+//Inserir uma vaga 
 app.post('/vagas/cadastro', (req, res) => {
     let body = req.body;
     console.log(body);
@@ -149,6 +158,7 @@ app.post('/vagas/cadastro', (req, res) => {
     });
 })
 
+//Retorna todas as vagas registradas 
 app.get('/vagas', (req, res) => {
     const dadosHistorico = pegaTodasVagasdeEmprego();
     console.log(dadosHistorico);
@@ -167,7 +177,7 @@ app.get('/vagas', (req, res) => {
     });
 })
 
-
+//Insere um aluno e um vaga na tabela alunos_vagas
 app.post('/vagas/inscricao', (req, res) => {
     let body = req.body;
     const dadosHistorico = inscricaoAlunosVagas(body.id_aluno, body.id_vaga);
@@ -187,81 +197,87 @@ app.post('/vagas/inscricao', (req, res) => {
     });
 })
 
-//Sucesso
+
+
+//Pega todas as vagas que um aluno está inscrito 
 app.get('/vagas/inscrito/:id', (req, res) => {
     let id_aluno = req.params.id;
     const comando = pegaAlunoVagas(id_aluno);
     console.log(comando);
-    connection.query(comando, function (err, results) {
+    connection.query(comando, function (err, results) {            
+        res.set('Content-Type', 'application/json');
         if (err) {
             console.log(err);
-            res.status(400);
-            res.set('Content-Type', 'application/json');
-            res.send("Deu pau");
+            res.status(400).send("Deu pau");
         } else {
             console.log(results);
-            res.status(200);
-            res.set('Content-Type', 'application/json');
-            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
         }
     });
 })
 
 //Pega todos os alunos inscritos em cada vaga 
-app.get('/vagas/todosInscrito/:id', (req, res) => {
-    let id_empresa = req.params.id;
-    const comando = pegaVagasdeEmprego(id_empresa);
+app.get('/vagas/todosInscritos/:id', (req, res) => {
+    let id_vaga = req.params.id;
+    const comando = pegaVagaAlunos(id_vaga);
     console.log(comando);
     connection.query(comando, function (err, results) {
-        if (err) 
-        {
+        if (err) {
             console.log(err);
-            res.status(400);
             res.set('Content-Type', 'application/json');
-            res.send("Deu pau");
+            res.status(400).send("Deu pau");
         } 
-        else 
-        {
-
+        else {
+            console.log(results);
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
         }
     });
 })
 
-app.post('/entrar_treinamento', (req, res) => {
+//Retorna todas os treinamentos registrados 
+app.get('/treinamentos', (req, res) => {
+    const comando = pegaTreinamentos();
+    console.log(comando);
+    connection.query(comando, function (err, results) {            
+        res.set('Content-Type', 'application/json');
+        if (err) {
+            res.status(400).send("Deu pau");
+        }
+        else {
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
+    });
+})
+
+//Insere um aluno e um treinamento na tabela treinamentos_alunos
+app.post('/treinamento/entrar', (req, res) => {
     let body = req.body;
     console.log(body);
     let comando = inserirTreinamentosAlunos(body.id_aluno, body.id_treinamentos);
     console.log(comando);
-    connection.query(comando, function (err: any, results: string | any[]) {
-        if (err) {
-            res.status(400);
-            res.set('Content-Type', 'application/json');
-            res.send("ERRO_ENTRAR_TREINAMENTO");
-        }
-        res.status(200);
-        console.log(res.statusCode);
-        console.log(results[0]);
+    connection.query(comando, function (err: any, results: string | any[]) {            
         res.set('Content-Type', 'application/json');
-        res.send(JSON.stringify("Aluno inserido no treinamento")); // passamos o objeto para JSON e devolvemos.
+        if (err) {
+            res.status(400).send("ERRO_ENTRAR_TREINAMENTO");
+        }
+        console.log(results);
+        res.status(200).send(JSON.stringify("Aluno inserido no treinamento")); // passamos o objeto para JSON e devolvemos.
     });
 })
 
-app.get('/treinamento_aluno/:id', (req, res) => {
+//Mostra todos os treinamentos de um aluno
+app.get('/treinamento/aluno/:id', (req, res) => {
     let id_aluno = req.params.id;
     console.log(id_aluno);
     let comando = pegaTreinamentosAlunos(id_aluno);
     console.log(comando);
-    connection.query(comando, function (err: any, results: string | any[]) {
-        if (err) {
-            res.status(400);
-            res.set('Content-Type', 'application/json');
-            res.send("ERRO_BUSCAR_TREINAMENTOS");
-        }
-        res.status(200);
-        console.log(res.statusCode);
-        console.log(results[0]);
+    connection.query(comando, function (err: any, results: string | any[]) {            
         res.set('Content-Type', 'application/json');
-        res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        if (err) {
+            res.status(400).send("ERRO_BUSCAR_TREINAMENTOS");
+        }
+        console.log(results);
+        res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
     });
 })
 
