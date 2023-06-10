@@ -118,9 +118,9 @@ app.post('/treinamentos', (req, res) => {
 })
 
 /// prototipo do get historico_alunos
-app.get('/historico_alunos', (req, res) => {
-    let body = req.body;
-    const dadosHistorico = pegaHistoricoAlunos(body.id_aluno);
+app.get('/historico_alunos/:id', (req, res) => {
+    let id_aluno = req.params.id;
+    const dadosHistorico = pegaHistoricoAlunos(id_aluno);
     console.log(dadosHistorico);
     connection.query(dadosHistorico, function (err: any, results: any) {
         if (err) throw err;
@@ -150,7 +150,6 @@ app.post('/vagas/cadastro', (req, res) => {
 })
 
 app.get('/vagas', (req, res) => {
-    let body = req.body;
     const dadosHistorico = pegaTodasVagasdeEmprego();
     console.log(dadosHistorico);
     connection.query(dadosHistorico, function (err, results) {
@@ -189,9 +188,9 @@ app.post('/vagas/inscricao', (req, res) => {
 })
 
 //Sucesso
-app.get('/vagas/inscrito', (req, res) => {
-    let body = req.body;
-    const comando = pegaAlunoVagas(body.id_aluno);
+app.get('/vagas/inscrito/:id', (req, res) => {
+    let id_aluno = req.params.id;
+    const comando = pegaAlunoVagas(id_aluno);
     console.log(comando);
     connection.query(comando, function (err, results) {
         if (err) {
@@ -209,39 +208,21 @@ app.get('/vagas/inscrito', (req, res) => {
 })
 
 //Pega todos os alunos inscritos em cada vaga 
-app.get('/vagas/todosInscrito', (req, res) => {
-    let body = req.body;
-    const comando = pegaVagasdeEmprego(body.id_empresa);
+app.get('/vagas/todosInscrito/:id', (req, res) => {
+    let id_empresa = req.params.id;
+    const comando = pegaVagasdeEmprego(id_empresa);
     console.log(comando);
     connection.query(comando, function (err, results) {
-        if (err) {
+        if (err) 
+        {
             console.log(err);
             res.status(400);
             res.set('Content-Type', 'application/json');
             res.send("Deu pau");
-        } else {
-            let alunosVaga : any = []
-            for (let vaga of results)
-            {
-                let comando2 = pegaVagaAlunos(vaga.id);
-                console.log(comando2);
-                connection.query(comando2, function (err, results) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        for (let aluno of results)
-                        {
-                            console.log(aluno.nome);
-                            alunosVaga.push(aluno.nome);
-                        }
-                    }
-                });
-            }        
-            for (let item of alunosVaga)
-            {
-                console.log(item);
-            }
-            res.send(JSON.stringify(alunosVaga));
+        } 
+        else 
+        {
+
         }
     });
 })
@@ -265,10 +246,10 @@ app.post('/entrar_treinamento', (req, res) => {
     });
 })
 
-app.get('/treinamento_aluno', (req, res) => {
-    let body = req.body;
-    console.log(body);
-    let comando = pegaTreinamentosAlunos(body.id_aluno);
+app.get('/treinamento_aluno/:id', (req, res) => {
+    let id_aluno = req.params.id;
+    console.log(id_aluno);
+    let comando = pegaTreinamentosAlunos(id_aluno);
     console.log(comando);
     connection.query(comando, function (err: any, results: string | any[]) {
         if (err) {
@@ -283,9 +264,6 @@ app.get('/treinamento_aluno', (req, res) => {
         res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
     });
 })
-
-
-
 
 // Cors
 app.use(cors({
