@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, 
     inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, 
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
-    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, pegarQuizAptidao} from './database';
+    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, pegarQuizAptidao, deletaTreinamentosAlunos, pegaGabaritoQuiz} from './database';
 
 
 var connection = criarConexao();
@@ -149,14 +149,36 @@ app.get('/historico_alunos/:id', (req, res) => {
     }); 
 });
 
-// cadastra o no historico aluno
+//Cadastra um quiz feito na tabela historico_aluno
 app.post('/historico_alunos/cadastro', (req, res) => {
     let body = req.body; 
-    const comando = inserirHistoricoAlunos(body); 
+    let comando = pegaGabaritoQuiz(body.id_quiz); 
     connection.query(comando, (err: any, results: any) => {
-        if (err) throw err;
+        if (err) {
+            res.status(400).send("Problema ao procurar o gabarito");
+        }
         console.log(results);
-        res.status(200).send("Foi!"); 
+        let numQuest = 0;
+        let acertos = 0;
+        for (var gabarito of results){
+            if(body.resposta[numQuest] == gabarito.resposta)
+                acertos++;
+            numQuest++;
+        }
+        let nota = 100*acertos/numQuest
+        comando = inserirHistoricoAlunos(body.id_aluno, body.id_quiz, nota)
+        console.log("chegou");
+        connection.query(comando, function (err, results) {
+            console.log(results);
+            res.set('Content-Type', 'application/json');
+            if (err) {
+                console.log(err);
+                res.status(400).send("Problema no cadastro do historico");
+            }
+            else {
+                res.status(200).send(JSON.stringify("Deu certo!"));
+            }
+        });
     });
 });
  
@@ -168,16 +190,12 @@ app.post('/vagas/cadastro', (req, res) => {
     let comando = criaVagasdeEmprego(body);
     console.log(comando);
     connection.query(comando, function (err, results) {
-        console.log(err);
-        console.log(results);
+        res.set('Content-Type', 'application/json');
         if (err) {
-            res.status(400);
-            res.set('Content-Type', 'application/json');
-            res.send("Deu pau");
+            res.status(400).send("Deu pau");
         }
         else {
-            res.status(200);
-            res.send(JSON.stringify("Deu certo!"));
+            res.status(200).send(JSON.stringify("Deu certo!"));
         }
     });
 })
@@ -186,15 +204,13 @@ app.post('/vagas/cadastro', (req, res) => {
 app.get('/vagas', (req, res) => {
     const dadosHistorico = pegaTodasVagasdeEmprego();
     console.log(dadosHistorico);
-    connection.query(dadosHistorico, function (err, results) {
+    connection.query(dadosHistorico, function (err, results) {            
+        res.set('Content-Type', 'application/json');
         if (err) {
-            res.status(400);
-            res.set('Content-Type', 'application/json');
-            res.send("Deu pau");
+            res.status(400).send("Deu pau");
         }
         else {
             res.status(200);
-            console.log(res.statusCode);
             res.set('Content-Type', 'application/json');
             res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
         }
@@ -255,7 +271,7 @@ app.get('/vagas/empresa/:id', (req, res) => {
     });
 })
 
-//Pega todos os alunos inscritos em cada vaga 
+//Pega todos os alunos inscritos em cada vaga da tabela vagas_alunos
 app.get('/vagas/todosInscritos/:id', (req, res) => {
     let id_vaga = req.params.id;
     const comando = pegaVagaAlunos(id_vaga);
@@ -273,7 +289,7 @@ app.get('/vagas/todosInscritos/:id', (req, res) => {
     });
 })
 
-//Retorna todas os treinamentos registrados menos os ja inscritos pelo aluno 
+//Retorna todas os treinamentos registrados menos os ja inscritos pelo aluno da tabela treinamentos
 app.get('/treinamentos/:id', (req, res) => {
     let id_aluno = req.params.id;
     const comando = pegaTreinamentos(id_aluno);
@@ -290,7 +306,7 @@ app.get('/treinamentos/:id', (req, res) => {
 })
 
 //Insere um aluno e um treinamento na tabela treinamentos_alunos
-app.post('/treinamento/entrar', (req, res) => {
+app.post('/treinamento/cadastro', (req, res) => {
     let body = req.body;
     console.log(body);
     let comando = inserirTreinamentosAlunos(body.id_aluno, body.id_treinamentos);
@@ -305,7 +321,7 @@ app.post('/treinamento/entrar', (req, res) => {
     });
 })
 
-//Mostra todos os treinamentos de um aluno
+//Mostra todos os treinamentos de um aluno da tabela treinamentos_alunos
 app.get('/treinamento/aluno/:id', (req, res) => {
     let id_aluno = req.params.id;
     console.log(id_aluno);
@@ -318,6 +334,22 @@ app.get('/treinamento/aluno/:id', (req, res) => {
         }
         console.log(results);
         res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+    });
+})
+
+//Deleta um aluno e um treinamento na tabela treinamentos_alunos
+app.post('/treinamento/deleta', (req, res) => {
+    let body = req.body;
+    console.log(body);
+    let comando = deletaTreinamentosAlunos(body.id_aluno, body.id_treinamentos);
+    console.log(comando);
+    connection.query(comando, function (err: any, results: string | any[]) {            
+        res.set('Content-Type', 'application/json');
+        if (err) {
+            res.status(400).send("ERRO_ENTRAR_TREINAMENTO");
+        }
+        console.log(results);
+        res.status(200).send(JSON.stringify("Aluno inserido no treinamento")); // passamos o objeto para JSON e devolvemos.
     });
 })
 
@@ -335,10 +367,13 @@ app.get('/quiz/aptidao/:id', (req, res) => {
         else {
             res.status(200);
             res.set('Content-Type', 'application/json');
+            console.log(results);
             res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
         }
     });
 })
+
+
 
 // Cors
 app.use(cors({

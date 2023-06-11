@@ -95,8 +95,15 @@ export function pegaHistoricoAlunos(id_aluno: String) {
 
 /// prototipo do post historico_alunos
 //Falta so conferir como vamos passar os parametros
-export function inserirHistoricoAlunos(objeto: historicoAlunos) {
-    let comando = "INSERT INTO historico_alunos (id_aluno, id_quiz, nota) values (\"" + objeto.id_aluno + "\",\"" + objeto.id_quiz + "\",\"" + objeto.nota + "\" );";
+export function inserirHistoricoAlunos(id_aluno : string, id_quiz : string, nota : any) {
+    let comando = "INSERT INTO historico_alunos (id_aluno, id_quiz, nota) values (\"" + id_aluno + "\",\"" + id_quiz + "\",\"" + nota + "\" );";
+    return comando;
+}
+
+/// prototipo do post historico_alunos
+//Falta so conferir como vamos passar os parametros
+export function pegaGabaritoQuiz(id_quiz : string) {
+    let comando = "SELECT resposta FROM questao where id_quiz = \"" + id_quiz + "\"";
     return comando;
 }
 
@@ -152,3 +159,9 @@ export function pegarQuizAptidao(id_treinamentos : string){
     let comando = "SELECT * FROM questao where id_quiz = (SELECT id_quiz FROM quiz,quizAptidao where quiz.id_treinamentos = \"" + id_treinamentos + "\" and quizAptidao.id_quiz = quiz.id);";
     return comando;
 }  
+/// prototipo do get treinamentos_alunos -- get
+export function deletaTreinamentosAlunos(id_aluno: String, id_treinamento : string) {
+    let comando = "DELETE FROM treinamentos_alunos where id_aluno = \"" + id_aluno + "\" and id_treinamento = \"" + id_treinamento + "\")";
+    return comando;
+}
+
