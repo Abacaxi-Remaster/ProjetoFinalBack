@@ -142,3 +142,8 @@ export function pegaTreinamentos(){
     let comando = "SELECT * FROM treinamentos";
     return comando;
 }
+
+ export function quizAptidao(id_quiz : string, elegivel :string="N" ){
+    let comando = "INSERT INTO quiz(id_quiz,elegivel) values(\"" + id_quiz + "\",\"" + elegivel + "\");";
+    return comando;
+}  

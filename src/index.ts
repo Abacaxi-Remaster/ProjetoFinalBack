@@ -1,9 +1,10 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
-import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, inserirQuestao, pegaHistoricoAlunos, 
-    criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, emailJaExiste, pegaTreinamentos} from './database';
-import e from 'express';
+import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, 
+    inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, 
+    pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
+    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos} from './database';
 
 
 var connection = criarConexao();
@@ -72,22 +73,18 @@ app.post('/cadastro', (req, res) => {
     connection.query(comando2, function (err: any, results: any) {
         res.set('Content-Type', 'application/json');
         if (err) {
-            console.log("1");
             res.status(400).send("Procura do email falhou");
         }
         else if(results[0] != null) {
-            console.log("2");
             res.status(204).send(JSON.stringify("Email já existe"));
         }
         else {
             connection.query(comando, function (err: any, results: any) {
                 res.set('Content-Type', 'application/json');
                 if (err) {
-                    console.log("3");
                     res.status(400).send("REGISTER_FAILED");
                 }
                 else {
-                    console.log("4");
                     console.log(results);
                     res.status(200).send(JSON.stringify("Conta criada!"));
                 }
@@ -126,16 +123,33 @@ app.post('/treinamentos/cadastro', (req, res) => {
     res.status(200).send("Foi");
 })
 
-///Devolve todo o histórico de um aluno
-app.get('/historico_alunos/:id', (req, res) => {
-    let id_aluno = req.params.id;
-    const dadosHistorico = pegaHistoricoAlunos(id_aluno);
+/// prototipo do get historico_alunos
+app.get('/historico_alunos', (req, res) => {
+    let body = req.body;
+    const dadosHistorico = pegaHistoricoAlunos(body.id_aluno);
     console.log(dadosHistorico);
-    connection.query(dadosHistorico, function (err: any, results: any) {
+    connection.query(dadosHistorico, function(err: any, results: any){
+        if (err) {
+            res.status(500);
+            res.send("Erro histórico de alunos");
+        } else {
+            console.log(results);
+            res.status(200);
+            res.json(results);
+        }
+    }); 
+});
+
+app.post('/historico_alunos/cadastro', (req, res) => {
+    let body = req.body; 
+    const comando = inserirHistoricoAlunos(body); 
+    connection.query(comando, (err: any, results: any) => {
         if (err) throw err;
-        console.log(results.body);
+        console.log(results);
+        res.status(200).send("Foi!"); 
     });
-})
+});
+ 
 
 //Inserir uma vaga 
 app.post('/vagas/cadastro', (req, res) => {
