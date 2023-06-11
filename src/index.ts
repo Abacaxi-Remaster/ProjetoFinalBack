@@ -102,14 +102,21 @@ app.post('/treinamentos/cadastro', (req, res) => {
         if (err) throw err;
         console.log(results);
     });
-    // array 
+
+    let flag = 0;
     for (const quiz of body.quiz) {
         let dadosQuiz = inserirQuiz(dadosTreinamentos[0]);
-        const comando = inserirQuizAptidao(dadosQuiz[0]);
         connection.query(dadosQuiz[1], function (err: any, results: any) {
             if (err) throw err;
             console.log(results);
-        });
+        });        
+        if (flag == 0){
+            connection.query(inserirQuizAptidao(dadosQuiz[0]), function (err: any, results: any) {
+                if (err) throw err;
+                console.log(results);
+            });
+            flag = flag + 1;
+        }
         for (const questao of quiz) {
             let dadosQuestao = inserirQuestao(questao, dadosQuiz[0]);
             console.log(dadosQuestao);
@@ -118,17 +125,17 @@ app.post('/treinamentos/cadastro', (req, res) => {
                 if (err) throw err;
                 console.log(results);
             });
-        }
+        }    
     }
 
     res.set('Content-Type', 'application/json');
     res.status(200).send("Foi");
 })
 
-/// prototipo do get historico_alunos
-app.get('/historico_alunos', (req, res) => {
-    let body = req.body;
-    const dadosHistorico = pegaHistoricoAlunos(body.id_aluno);
+///pega o historico de um aluno
+app.get('/historico_alunos/:id', (req, res) => {
+    let id_empresa = req.params.id;
+    const dadosHistorico = pegaHistoricoAlunos(id_empresa);
     console.log(dadosHistorico);
     connection.query(dadosHistorico, function(err: any, results: any){
         if (err) {
@@ -142,6 +149,7 @@ app.get('/historico_alunos', (req, res) => {
     }); 
 });
 
+// cadastra o no historico aluno
 app.post('/historico_alunos/cadastro', (req, res) => {
     let body = req.body; 
     const comando = inserirHistoricoAlunos(body); 
