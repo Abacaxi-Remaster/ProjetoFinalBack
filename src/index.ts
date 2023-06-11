@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, 
     inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, 
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
-    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, pegarQuizAptidao, deletaTreinamentosAlunos, pegaGabaritoQuiz} from './database';
+    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, pegarQuizAptidao, deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunosVagas} from './database';
 
 
 var connection = criarConexao();
@@ -237,6 +237,25 @@ app.post('/vagas/inscricao', (req, res) => {
     });
 })
 
+//Insere um aluno e um vaga na tabela alunos_vagas
+app.post('/vagas/deleta', (req, res) => {
+    let body = req.body;
+    const comando = deletaAlunosVagas(body.id_aluno, body.id_vaga);
+    console.log(comando);
+    connection.query(comando, function (err, results) {
+        if (err) {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau");
+        }
+        else {
+            res.status(200);
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
+    });
+})
+
 //Pega todas as vagas que um aluno está inscrito 
 app.get('/vagas/inscrito/:id', (req, res) => {
     let id_aluno = req.params.id;
@@ -253,6 +272,7 @@ app.get('/vagas/inscrito/:id', (req, res) => {
         }
     });
 })
+
 
 //Pega todas as vagas que uma empresa criou 
 app.get('/vagas/empresa/:id', (req, res) => {

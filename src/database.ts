@@ -126,6 +126,12 @@ export function inscricaoAlunosVagas(id_aluno: string, id_vaga: string) {
     return comando;
 }
 
+//Inscreve o aluno numa vaga de emprego
+export function deletaAlunosVagas(id_aluno: string, id_vaga: string) {
+    let comando = "DELETE FROM alunos_vagas where id_aluno = \"" + id_aluno + "\" and id_vaga = \"" + id_vaga + "\";"
+    return comando;
+}
+
 // Mostra as vagas que o aluno está inscrito
 export function pegaAlunoVagas(id_aluno : string){
     let comando = "SELECT * FROM vagas_de_emprego where id IN (SELECT id_vaga FROM alunos_vagas where id_aluno = \"" + id_aluno + "\");";
