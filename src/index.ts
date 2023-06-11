@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, 
     inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, 
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
-    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego} from './database';
+    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, pegarQuizAptidao} from './database';
 
 
 var connection = criarConexao();
@@ -221,8 +221,6 @@ app.post('/vagas/inscricao', (req, res) => {
     });
 })
 
-
-
 //Pega todas as vagas que um aluno está inscrito 
 app.get('/vagas/inscrito/:id', (req, res) => {
     let id_aluno = req.params.id;
@@ -319,6 +317,25 @@ app.get('/treinamento/aluno/:id', (req, res) => {
         }
         console.log(results);
         res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+    });
+})
+
+//Pegar quiz aptidao
+app.get('/quiz/aptidao/:id', (req, res) => {
+    let id_treinamento = req.params.id;
+    const comando = pegarQuizAptidao(id_treinamento);
+    console.log(comando);
+    connection.query(comando, function (err, results) {
+        if (err) {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau");
+        }
+        else {
+            res.status(200);
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
     });
 })
 

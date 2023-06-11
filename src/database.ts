@@ -147,3 +147,8 @@ export function inserirQuizAptidao(id_quiz : string){
     let comando = "INSERT INTO quizAptidao (id_quiz,elegivel) values (\"" + id_quiz + "\",\"n\");";
     return comando;
 }  
+
+export function pegarQuizAptidao(id_treinamentos : string){
+    let comando = "SELECT * FROM questao where id_quiz = (SELECT id_quiz FROM quiz,quizAptidao where quiz.id_treinamentos = \"" + id_treinamentos + "\" and quizAptidao.id_quiz = quiz.id);";
+    return comando;
+}  
