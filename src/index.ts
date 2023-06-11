@@ -273,9 +273,10 @@ app.get('/vagas/todosInscritos/:id', (req, res) => {
     });
 })
 
-//Retorna todas os treinamentos registrados 
-app.get('/treinamentos', (req, res) => {
-    const comando = pegaTreinamentos();
+//Retorna todas os treinamentos registrados menos os ja inscritos pelo aluno 
+app.get('/treinamentos/:id', (req, res) => {
+    let id_aluno = req.params.id;
+    const comando = pegaTreinamentos(id_aluno);
     console.log(comando);
     connection.query(comando, function (err, results) {            
         res.set('Content-Type', 'application/json');

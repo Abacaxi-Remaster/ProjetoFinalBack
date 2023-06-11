@@ -138,8 +138,8 @@ export function pegaVagaAlunos(id_vaga : string){
 }
 
 // Mostra as vagas que o aluno está inscrito
-export function pegaTreinamentos(){
-    let comando = "SELECT * FROM treinamentos";
+export function pegaTreinamentos(id_aluno : string){
+    let comando = "SELECT * FROM treinamentos where id NOT IN (SELECT id_treinamento FROM treinamentos_alunos where id_aluno = \"" + id_aluno + "\");";
     return comando;
 }
 
