@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, 
     inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, 
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
-    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos} from './database';
+    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego} from './database';
 
 
 var connection = criarConexao();
@@ -105,6 +105,7 @@ app.post('/treinamentos/cadastro', (req, res) => {
     // array 
     for (const quiz of body.quiz) {
         let dadosQuiz = inserirQuiz(dadosTreinamentos[0]);
+        const comando = inserirQuizAptidao(dadosQuiz[0]);
         connection.query(dadosQuiz[1], function (err: any, results: any) {
             if (err) throw err;
             console.log(results);
@@ -119,6 +120,7 @@ app.post('/treinamentos/cadastro', (req, res) => {
             });
         }
     }
+
     res.set('Content-Type', 'application/json');
     res.status(200).send("Foi");
 })
@@ -217,6 +219,23 @@ app.post('/vagas/inscricao', (req, res) => {
 app.get('/vagas/inscrito/:id', (req, res) => {
     let id_aluno = req.params.id;
     const comando = pegaAlunoVagas(id_aluno);
+    console.log(comando);
+    connection.query(comando, function (err, results) {            
+        res.set('Content-Type', 'application/json');
+        if (err) {
+            console.log(err);
+            res.status(400).send("Deu pau");
+        } else {
+            console.log(results);
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
+    });
+})
+
+//Pega todas as vagas que uma empresa criou 
+app.get('/vagas/empresa/:id', (req, res) => {
+    let id_empresa = req.params.id;
+    const comando = pegaVagasdeEmprego(id_empresa);
     console.log(comando);
     connection.query(comando, function (err, results) {            
         res.set('Content-Type', 'application/json');

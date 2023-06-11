@@ -143,7 +143,7 @@ export function pegaTreinamentos(){
     return comando;
 }
 
- export function quizAptidao(id_quiz : string, elegivel :string="N" ){
-    let comando = "INSERT INTO quiz(id_quiz,elegivel) values(\"" + id_quiz + "\",\"" + elegivel + "\");";
+export function inserirQuizAptidao(id_quiz : string){
+    let comando = "INSERT INTO quizAptidao (id_quiz,elegivel) values (\"" + id_quiz + "\",\"n\");";
     return comando;
 }  
