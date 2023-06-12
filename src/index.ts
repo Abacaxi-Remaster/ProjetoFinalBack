@@ -6,7 +6,7 @@ import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTr
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
     emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, 
     deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunoVaga, deletaVaga, deletaAlunosVaga, 
-    pegarQuestoesQuizAptidao, pegarQuestoesQuiz, pegarIdQuiz, pegarNotaQuiz, pegarIdQuizApt} from './database';
+    pegarQuestoesQuizAptidao, pegarQuestoesQuiz, pegarIdQuiz, pegarNotaQuiz, pegarIdQuizApt, pegaIdTreinamento} from './database';
 
 
 var connection = criarConexao();
@@ -369,18 +369,27 @@ app.get('/treinamentos/:id', (req, res) => {
 app.post('/treinamento/cadastro', (req, res) => {
     let body = req.body;
     console.log(body);
-    let comando = inserirTreinamentosAlunos(body.id_aluno, body.id_treinamentos);
+    let comando = pegaIdTreinamento(body.id_quiz);
     console.log(comando);
-    connection.query(comando, function (err: any, results: string | any[]) {            
+    connection.query(comando, function (err, results) {            
         res.set('Content-Type', 'application/json');
         if (err) {
-            res.status(400).send("ERRO_ENTRAR_TREINAMENTO");
+            res.status(400).send("Erro ao procurar o id_quiz na tabela quizAptidao");
         }
         else {
-            console.log(results);
-            res.status(200).send(JSON.stringify("Aluno inserido no treinamento")); // passamos o objeto para JSON e devolvemos.
+            comando = inserirTreinamentosAlunos(body.id_aluno, results[0]);
+            console.log(comando);
+            connection.query(comando, function (err, results) {            
+                if (err) {
+                    res.status(400).send("Erro ao cadastra um aluno e um treinamento na tabela treinamentos_alunos");
+                }
+                else {
+                    console.log(results);
+                    res.status(200).send(JSON.stringify("Aluno inserido no treinamento")); // passamos o objeto para JSON e devolvemos.
+                }
+        
+            });
         }
-
     });
 })
 
