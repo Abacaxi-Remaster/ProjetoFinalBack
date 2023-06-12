@@ -5,7 +5,7 @@ import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTr
     inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, 
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
     emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, 
-    pegarQuizAptidao, deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunosVagas, pegarQuiz} from './database';
+    pegarQuizAptidao, deletaTreinamentosAlunos, pegaGabaritoQuiz, pegarQuiz, deletaAlunoVaga, deletaVaga, deletaAlunosVaga} from './database';
 
 
 var connection = criarConexao();
@@ -128,7 +128,6 @@ app.post('/treinamentos/cadastro', (req, res) => {
             });
         }    
     }
-
     res.set('Content-Type', 'application/json');
     res.status(200).send("Foi");
 })
@@ -203,6 +202,31 @@ app.post('/vagas/cadastro', (req, res) => {
     });
 })
 
+//Deleta uma vaga 
+app.post('/vagas/deleta', (req, res) => {
+    let body = req.body;
+    let comando = deletaAlunosVaga(body.id_vaga);
+    console.log(comando);
+    connection.query(comando, function (err, results) {            
+        res.set('Content-Type', 'application/json');
+        if (err) {
+            res.status(400).send("Problema ao deletar os alunos numa vaga em alunos_vagas");
+        }
+        else {
+            comando = deletaVaga(body.id_vaga);
+            connection.query(comando, function (err, results) {                    
+                if (err) {
+
+                    res.status(400).send("Problema ao deletar a vaga em vagas_de_emprego");
+                }
+                else {
+                    res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+                }
+            });
+        }
+    });
+})
+
 //Retorna todas as vagas registradas 
 app.get('/vagas', (req, res) => {
     const dadosHistorico = pegaTodasVagasdeEmprego();
@@ -240,10 +264,10 @@ app.post('/vagas/inscricao', (req, res) => {
     });
 })
 
-//Insere um aluno e um vaga na tabela alunos_vagas
-app.post('/vagas/deleta', (req, res) => {
+//Deleta um aluno e um vaga na tabela alunos_vagas
+app.post('/vagas/aluno/desinscricao', (req, res) => {
     let body = req.body;
-    const comando = deletaAlunosVagas(body.id_aluno, body.id_vaga);
+    const comando = deletaAlunoVaga(body.id_aluno, body.id_vaga);
     console.log(comando);
     connection.query(comando, function (err, results) {
         if (err) {
@@ -294,15 +318,15 @@ app.get('/vagas/empresa/:id', (req, res) => {
     });
 })
 
-//Pega todos os alunos inscritos em cada vaga da tabela vagas_alunos
+//Pega o nome de todos os alunos inscritos em uma vaga da tabela vagas_alunos
 app.get('/vagas/todosInscritos/:id', (req, res) => {
     let id_vaga = req.params.id;
     const comando = pegaVagaAlunos(id_vaga);
     console.log(comando);
-    connection.query(comando, function (err, results) {
+    connection.query(comando, function (err, results) {            
+        res.set('Content-Type', 'application/json');
         if (err) {
             console.log(err);
-            res.set('Content-Type', 'application/json');
             res.status(400).send("Deu pau");
         } 
         else {
@@ -391,27 +415,23 @@ app.get('/quiz/aptidao/:id', (req, res) => {
         else {
             console.log(results);
             console.log(results.length);
-            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+            res.status(200).send(JSON.stringify(results)); 
         }
     });
 })
 
-//Pegar quiz que não seja de aptidao
+//Pegar as questoes de um quiz
 app.get('/quiz/:id', (req, res) => {
-    let id_treinamento = req.params.id;
-    const comando = pegarQuiz(id_treinamento);
+    let id_quiz = req.params.id;
+    const comando = pegarQuiz(id_quiz);
     console.log(comando);
     connection.query(comando, function (err, results) {            
-        res.set('Content-Type', 'application/json');
+        res.set('Content-Type', 'application/json');            
         if (err) {
-            res.status(400);
-            res.set('Content-Type', 'application/json');
-            res.send("Deu pau");
+            res.status(400).send("");
         }
-        else {
-            console.log(results);
-            console.log(results.length);
-            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        else {        
+            res.status(200).send(JSON.stringify(results)); 
         }
     });
 })
