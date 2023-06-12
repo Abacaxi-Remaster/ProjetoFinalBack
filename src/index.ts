@@ -4,7 +4,8 @@ import bodyParser from 'body-parser';
 import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTreinamentos, inserirQuiz, 
     inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, 
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
-    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, pegarQuizAptidao, deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunosVagas} from './database';
+    emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, 
+    pegarQuizAptidao, deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunosVagas, pegarQuiz} from './database';
 
 
 var connection = criarConexao();
@@ -152,6 +153,8 @@ app.get('/historico_alunos/:id', (req, res) => {
 //Cadastra um quiz feito na tabela historico_aluno
 app.post('/historico_alunos/cadastro', (req, res) => {
     let body = req.body; 
+    console.log(body.id_quiz);
+    console.log(body.id_aluno);
     let comando = pegaGabaritoQuiz(body.id_quiz); 
     connection.query(comando, (err: any, results: any) => {
         if (err) {
@@ -378,22 +381,40 @@ app.get('/quiz/aptidao/:id', (req, res) => {
     let id_treinamento = req.params.id;
     const comando = pegarQuizAptidao(id_treinamento);
     console.log(comando);
-    connection.query(comando, function (err, results) {
+    connection.query(comando, function (err, results) {            
+        res.set('Content-Type', 'application/json');
         if (err) {
             res.status(400);
             res.set('Content-Type', 'application/json');
             res.send("Deu pau");
         }
         else {
-            res.status(200);
-            res.set('Content-Type', 'application/json');
             console.log(results);
-            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+            console.log(results.length);
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
         }
     });
 })
 
-
+//Pegar quiz que não seja de aptidao
+app.get('/quiz/:id', (req, res) => {
+    let id_treinamento = req.params.id;
+    const comando = pegarQuiz(id_treinamento);
+    console.log(comando);
+    connection.query(comando, function (err, results) {            
+        res.set('Content-Type', 'application/json');
+        if (err) {
+            res.status(400);
+            res.set('Content-Type', 'application/json');
+            res.send("Deu pau");
+        }
+        else {
+            console.log(results);
+            console.log(results.length);
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
+    });
+})
 
 // Cors
 app.use(cors({
