@@ -6,7 +6,7 @@ import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTr
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
     emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, 
     deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunoVaga, deletaVaga, deletaAlunosVaga, 
-    pegarQuestoesQuizAptidao, pegarQuestoesQuiz, pegarIdQuiz, pegarNotaQuiz} from './database';
+    pegarQuestoesQuizAptidao, pegarQuestoesQuiz, pegarIdQuiz, pegarNotaQuiz, pegarIdQuizApt} from './database';
 
 
 var connection = criarConexao();
@@ -396,56 +396,76 @@ app.get('/treinamento/aluno/:id', (req, res) => {
             for (let i = 0; i < results.length; i++) {
                 array[i] = {
                     treinamento: "",
+                    quizApt: "",
                     quiz1: "",
                     quiz2: "",
+                    notaApt: "",
                     nota1: "",
                     nota2: ""
                 };
                 array[i].treinamento = JSON.stringify(results[i]);
-                comando = pegarIdQuiz(results[i].id);
-                connection.query(comando, function (err, results2) {
+                comando = pegarIdQuizApt(results[i].id);
+                connection.query(comando, function (err, results4) {
                     if (err) {
-                        res.status(400).send("Erro ao buscar o id do quiz");
+                        res.status(400).send("Erro ao buscar o id do quiz apt");
                     } else {
-                        array[i].quiz1 = JSON.stringify(results2[0]);
-                        array[i].quiz2 = JSON.stringify(results2[1]);
-                        console.log(array[i].quiz2);
-                        let count = 0;
-                        for (let x = 0; x < 2; x++) {
-                            comando = pegarNotaQuiz(results2[x].id);
-                            console.log(comando);
-                            connection.query(comando, function (err, results3) {
-                                if (err) {
-                                    res.status(400).send("Erro ao buscar a nota");
+                        array[i].quizApt = JSON.stringify(results4[0]);
+                        let notaQuizAptId = pegarNotaQuiz(results4[0].id_quiz);
+                        connection.query(notaQuizAptId, function (err, results5) {
+                            if (err) {
+                                res.status(400).send("Erro ao buscar a nota do quiz apt");
+                            } else {
+                                console.log("results5: " + JSON.stringify(results5[0]));
+                                if (results5[0] == undefined) {
+                                    array[i].notaApt = JSON.stringify({ "nota": 0 });
                                 } else {
-                                    console.log(JSON.stringify(results3[0]));
-                                    if(results3[0] == undefined) {
-                                        if (x == 0) {
-                                            array[i].nota1 = JSON.stringify({"nota":0});
-                                        } else {
-                                            array[i].nota2 = JSON.stringify({"nota":0});
-                                        }
-                                    } else {
-                                        if (x == 0) {
-                                        array[i].nota1 = JSON.stringify(results3[0]);
-                                        } else {
-                                            array[i].nota2 = JSON.stringify(results3[0]);
-                                        }
-                                    }
-
-                                    count++;
-                                    if (count === 2 && i === results.length - 1) {
-                                        res.status(200).send(JSON.stringify(array)); // passamos o objeto para JSON e devolvemos.
-                                    }
+                                    array[i].notaApt = JSON.stringify(results5[0]);
                                 }
-                            });
-                        }
+                            }
+                        });
+                        let quizId = pegarIdQuiz(results[i].id);
+                        connection.query(quizId, function (err, results2) {
+                            if (err) {
+                                res.status(400).send("Erro ao buscar o id do quiz");
+                            } else {
+                                array[i].quiz1 = JSON.stringify(results2[0]);
+                                array[i].quiz2 = JSON.stringify(results2[1]);
+                                let count = 0;
+                                for (let x = 0; x < 2; x++) {
+                                    let notaQuizId = pegarNotaQuiz(results2[x].id);
+                                    connection.query(notaQuizId, function (err, results3) {
+                                        if (err) {
+                                            res.status(400).send("Erro ao buscar a nota");
+                                        } else {
+                                            if (results3[0] == undefined) {
+                                                if (x == 0) {
+                                                    array[i].nota1 = JSON.stringify({ "nota": 0 });
+                                                } else {
+                                                    array[i].nota2 = JSON.stringify({ "nota": 0 });
+                                                }
+                                            } else {
+                                                if (x == 0) {
+                                                    array[i].nota1 = JSON.stringify(results3[0]);
+                                                } else {
+                                                    array[i].nota2 = JSON.stringify(results3[0]);
+                                                }
+                                            }
+                                            count++;
+                                            if (count === 2 && i === results.length - 1) {
+                                                res.status(200).send(JSON.stringify(array)); // passamos o objeto para JSON e devolvemos.
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
                 });
             }
         }
     });
 });
+
 
 
 

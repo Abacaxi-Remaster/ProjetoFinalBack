@@ -160,7 +160,7 @@ export function pegaGabaritoQuiz(id_quiz : string) {
 
 //Pega o quiz aptidão
 export function pegarQuestoesQuizAptidao(id_treinamentos : string){
-    let comando = "SELECT * FROM questao where id_quiz = (SELECT id_quiz FROM quiz,quizAptidao where quiz.id_treinamentos = \"" + id_treinamentos + "\" and quizAptidao.id_quiz = quiz.id);";
+    let comando = "SELECT * FROM questao where id_quiz = (SELECT id_quiz FROM quiz,quizaptidao where quiz.id_treinamentos = \"" + id_treinamentos + "\" and quizAptidao.id_quiz = quiz.id);";
     return comando;
 }  
 
@@ -172,7 +172,13 @@ export function pegarQuestoesQuiz(id_quiz : string){
 
 //Pega todas as questões de um quiz
 export function pegarIdQuiz(id_treinamentos : string){
-    let comando = "SELECT id FROM quiz where id_treinamentos = \"" + id_treinamentos + "\";";
+    let comando = "SELECT id FROM quiz where id_treinamentos = \"" + id_treinamentos + "\" and id NOT IN (SELECT id_quiz FROM quizAptidao);";
+    return comando;
+}  
+
+//Pega todas as questões de um quiz
+export function pegarIdQuizApt(id_treinamentos : string){
+    let comando = "SELECT id_quiz FROM quiz,quizAptidao where quiz.id_treinamentos = \"" + id_treinamentos + "\" and quizAptidao.id_quiz = quiz.id ;";
     return comando;
 }  
 
