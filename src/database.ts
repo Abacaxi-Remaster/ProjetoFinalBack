@@ -23,15 +23,6 @@ export function criarConexao() {
 
 ///INSERT'S 
 
-export function procurarUsuario(objeto: any) {
-    let comando = "SELECT * FROM " + objeto.usuario + " where email = \"" + objeto.email + "\" and senha = \"" + objeto.senha + "\"";
-    return comando;
-}
-
-export function emailJaExiste(objeto: any) {
-    let comando = "SELECT * FROM " + objeto.usuario + " where email = \"" + objeto.email + "\"";
-    return comando;
-}
 
 export function inserirAluno(objeto: alunos) {
     let comando = "INSERT INTO alunos (id,nome,senha,email,curso) " +
@@ -108,6 +99,16 @@ export function inserirQuizAptidao(id_quiz : string){
 }  
 
 ///SELECT'S
+
+export function procurarUsuario(objeto: any) {
+    let comando = "SELECT * FROM " + objeto.usuario + " where email = \"" + objeto.email + "\" and senha = \"" + objeto.senha + "\"";
+    return comando;
+}
+
+export function emailJaExiste(objeto: any) {
+    let comando = "SELECT * FROM " + objeto.usuario + " where email = \"" + objeto.email + "\"";
+    return comando;
+}
 
 /// prototipo do get treinamentos_alunos -- get
 export function pegaTreinamentosAlunos(id_aluno: String) {
@@ -186,7 +187,7 @@ export function deletaTreinamentosAlunos(id_aluno: String, id_treinamento : stri
 
 //Deleta uma vaga de emprego
 export function deletaVaga(id_vaga: string) {
-    let comando = "DELETE FROM vagas_de_emprego where id_vaga = \"" + id_vaga + "\";"
+    let comando = "DELETE FROM vagas_de_emprego where id = \"" + id_vaga + "\";"
     return comando;
 }
 
