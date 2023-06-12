@@ -73,7 +73,7 @@ export function inserirQuestao(objeto: questao, id_quiz: String) {
     let comando = "INSERT INTO questao (id, id_quiz, enunciado, resposta, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e) " +
         "values (\"" + uuid.v4() + "\", \"" + id_quiz + "\",\"" + objeto.enunciado + "\",\"" + objeto.resposta + "\",\"" + objeto.opcao_a + "\",\"" + objeto.opcao_b + "\",\""
         + objeto.opcao_c + "\",\"" + objeto.opcao_d + "\",\"" + objeto.opcao_e + "\" );";
-    return comando;pegarQuiz
+    return comando;
 }
 
 /// prototipo do post treinamentos_alunos
@@ -158,16 +158,23 @@ export function pegaGabaritoQuiz(id_quiz : string) {
 }
 
 //Pega o quiz aptidão
-export function pegarQuizAptidao(id_treinamentos : string){
+export function pegarQuestoesQuizAptidao(id_treinamentos : string){
     let comando = "SELECT * FROM questao where id_quiz = (SELECT id_quiz FROM quiz,quizAptidao where quiz.id_treinamentos = \"" + id_treinamentos + "\" and quizAptidao.id_quiz = quiz.id);";
     return comando;
 }  
 
 //Pega todas as questões de um quiz
-export function pegarQuiz(id_quiz : string){
+export function pegarQuestoesQuiz(id_quiz : string){
     let comando = "SELECT * FROM questao where id_quiz = \"" + id_quiz + "\";";
     return comando;
 }  
+
+//Pega todas as questões de um quiz
+export function pegarIdQuiz(id_treinamentos : string){
+    let comando = "SELECT id FROM quiz where id_treinamentos = \"" + id_treinamentos + "\";";
+    return comando;
+}  
+
 
 ///DELETE'S 
 

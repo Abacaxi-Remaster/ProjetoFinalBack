@@ -5,7 +5,8 @@ import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTr
     inserirQuestao, pegaHistoricoAlunos, criaVagasdeEmprego, pegaTodasVagasdeEmprego, inscricaoAlunosVagas, 
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
     emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, 
-    pegarQuizAptidao, deletaTreinamentosAlunos, pegaGabaritoQuiz, pegarQuiz, deletaAlunoVaga, deletaVaga, deletaAlunosVaga} from './database';
+    deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunoVaga, deletaVaga, deletaAlunosVaga, 
+    pegarQuestoesQuizAptidao, pegarQuestoesQuiz} from './database';
 
 
 var connection = criarConexao();
@@ -403,7 +404,7 @@ app.post('/treinamento/deleta', (req, res) => {
 //Pegar quiz aptidao
 app.get('/quiz/aptidao/:id', (req, res) => {
     let id_treinamento = req.params.id;
-    const comando = pegarQuizAptidao(id_treinamento);
+    const comando = pegarQuestoesQuizAptidao(id_treinamento);
     console.log(comando);
     connection.query(comando, function (err, results) {            
         res.set('Content-Type', 'application/json');
@@ -423,7 +424,7 @@ app.get('/quiz/aptidao/:id', (req, res) => {
 //Pegar as questoes de um quiz
 app.get('/quiz/:id', (req, res) => {
     let id_quiz = req.params.id;
-    const comando = pegarQuiz(id_quiz);
+    const comando = pegarQuestoesQuiz(id_quiz);
     console.log(comando);
     connection.query(comando, function (err, results) {            
         res.set('Content-Type', 'application/json');            
@@ -435,6 +436,8 @@ app.get('/quiz/:id', (req, res) => {
         }
     });
 })
+
+/// 
 
 // Cors
 app.use(cors({
