@@ -7,9 +7,19 @@ import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTr
     emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, 
     deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunoVaga, deletaVaga, deletaAlunosVaga, 
     pegarQuestoesQuizAptidao, pegarQuestoesQuiz} from './database';
-
+import { treinamentos } from "./interfaces/treinamentos";
+import internal from 'stream';
 
 var connection = criarConexao();
+
+interface menu 
+{
+    "treinamento": string,
+    "quiz1": string,
+    "quiz2": string,
+    "nota1": number,
+    "nota2": number
+}
 
 // Porta do servidor
 const PORT = 8000
@@ -170,7 +180,6 @@ app.post('/historico_alunos/cadastro', (req, res) => {
         }
         let nota = 100*acertos/numQuest
         comando = inserirHistoricoAlunos(body.id_aluno, body.id_quiz, nota)
-        console.log("chegou");
         connection.query(comando, function (err, results) {
             console.log(results);
             res.set('Content-Type', 'application/json');
@@ -178,8 +187,11 @@ app.post('/historico_alunos/cadastro', (req, res) => {
                 console.log(err);
                 res.status(400).send("Problema no cadastro do historico");
             }
+            else if (nota > 70){
+                res.status(200).send(JSON.stringify("Aprovado"));
+            }
             else {
-                res.status(200).send(JSON.stringify("Deu certo!"));
+                res.status(200).send(JSON.stringify("Reprovado"));
             }
         });
     });
@@ -376,15 +388,16 @@ app.post('/treinamento/cadastro', (req, res) => {
 app.get('/treinamento/aluno/:id', (req, res) => {
     let id_aluno = req.params.id;
     let comando = pegaTreinamentosAlunos(id_aluno);
-    let array = [];
     connection.query(comando, function (err: any, results: string | any[]) {            
         res.set('Content-Type', 'application/json');
         if (err) {
             res.status(400).send("ERRO_BUSCAR_TREINAMENTOS");
         }
         else{
-            console.log(results.length);
-            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+            let array :menu[] = new Array(5);
+            console.log(results[0]);
+            array[0].treinamento = results[0]; 
+            res.status(200).send(JSON.stringify(array[0])); // passamos o objeto para JSON e devolvemos.
         }
     });
 })
