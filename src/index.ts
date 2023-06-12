@@ -240,10 +240,11 @@ app.post('/vagas/deleta', (req, res) => {
 })
 
 //Retorna todas as vagas registradas 
-app.get('/vagas', (req, res) => {
-    const dadosHistorico = pegaTodasVagasdeEmprego();
-    console.log(dadosHistorico);
-    connection.query(dadosHistorico, function (err, results) {            
+app.get('/vagas/:id', (req, res) => {
+    let id_aluno = req.params.id;
+    const comando = pegaTodasVagasdeEmprego(id_aluno);
+    console.log(comando);
+    connection.query(comando, function (err, results) {            
         res.set('Content-Type', 'application/json');
         if (err) {
             res.status(400).send("Deu pau");
@@ -391,6 +392,8 @@ app.get('/treinamento/aluno/:id', (req, res) => {
         res.set('Content-Type', 'application/json');
         if (err) {
             res.status(400).send("Erro ao buscar o treinamentos");
+        } else if (results[0] == undefined) {
+            res.status(400).send("Não tem treinamentos");
         } else {
             let array = new Array(results.length);
             for (let i = 0; i < results.length; i++) {
@@ -465,9 +468,6 @@ app.get('/treinamento/aluno/:id', (req, res) => {
         }
     });
 });
-
-
-
 
 //Deleta um aluno e um treinamento na tabela treinamentos_alunos
 app.post('/treinamento/deleta', (req, res) => {
