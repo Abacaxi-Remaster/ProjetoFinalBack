@@ -68,8 +68,8 @@ export function inserirQuestao(objeto: questao, id_quiz: String) {
 }
 
 /// prototipo do post treinamentos_alunos
-export function inserirTreinamentosAlunos(id_aluno: String, id_treinamentos: String) {
-    let comando = "INSERT INTO treinamentos_alunos (id_aluno, id_treinamentos, status) values (\"" + id_aluno + "\",\"" + id_treinamentos + "\",\"c\" );";
+export function inserirTreinamentosAlunos(id_aluno: String, id_treinamento: String) {
+    let comando = "INSERT INTO treinamentos_alunos (id_aluno, id_treinamento, situacao) values (\"" + id_aluno + "\",\"" + id_treinamento + "\",\"c\" );";
     return comando;
 }
 

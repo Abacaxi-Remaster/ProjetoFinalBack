@@ -364,24 +364,28 @@ app.post('/treinamento/cadastro', (req, res) => {
         if (err) {
             res.status(400).send("ERRO_ENTRAR_TREINAMENTO");
         }
-        console.log(results);
-        res.status(200).send(JSON.stringify("Aluno inserido no treinamento")); // passamos o objeto para JSON e devolvemos.
+        else {
+            console.log(results);
+            res.status(200).send(JSON.stringify("Aluno inserido no treinamento")); // passamos o objeto para JSON e devolvemos.
+        }
+
     });
 })
 
 //Mostra todos os treinamentos de um aluno da tabela treinamentos_alunos
 app.get('/treinamento/aluno/:id', (req, res) => {
     let id_aluno = req.params.id;
-    console.log(id_aluno);
     let comando = pegaTreinamentosAlunos(id_aluno);
-    console.log(comando);
+    let array = [];
     connection.query(comando, function (err: any, results: string | any[]) {            
         res.set('Content-Type', 'application/json');
         if (err) {
             res.status(400).send("ERRO_BUSCAR_TREINAMENTOS");
         }
-        console.log(results);
-        res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        else{
+            console.log(results.length);
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
     });
 })
 
