@@ -176,6 +176,11 @@ export function pegarIdQuiz(id_treinamentos : string){
     return comando;
 }  
 
+//Pega a nota de um quiz
+export function pegarNotaQuiz(id_quiz : string){
+    let comando = "SELECT nota FROM historico_alunos where id_quiz = \"" + id_quiz + "\";";
+    return comando;
+}  
 
 ///DELETE'S 
 
