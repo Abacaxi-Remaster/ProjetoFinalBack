@@ -95,7 +95,7 @@ app.post('/cadastro', (req, res) => {
             connection.query(comando, function (err: any, results: any) {
                 res.set('Content-Type', 'application/json');
                 if (err) {
-                    res.status(400).send("REGISTER_FAILED");
+                    res.status(400).send("Falha a inserir o usuario");
                 }
                 else {
                     console.log(results);
