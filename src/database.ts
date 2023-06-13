@@ -140,6 +140,12 @@ export function pegaNomeEmpresa(id_empresa: String) {
     return comando;
 }
 
+//Pega o nome de todos os alunos 
+export function pegaTodosAlunos() {
+    let comando = "SELECT nome,email,id FROM alunos ;";
+    return comando;
+}
+
 // Mostra as vagas que o aluno está inscrito
 export function pegaAlunoVagas(id_aluno : string){
     let comando = "SELECT * FROM vagas_de_emprego where id IN (SELECT id_vaga FROM alunos_vagas where id_aluno = \"" + id_aluno + "\");";

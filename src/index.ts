@@ -6,7 +6,7 @@ import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTr
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
     emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, 
     deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunoVaga, deletaVaga, deletaAlunosVaga, 
-    pegarQuestoesQuizAptidao, pegarQuestoesQuiz, pegarIdQuiz, pegarNotaQuiz, pegarIdQuizApt, pegaIdTreinamento, pegaNomeEmpresa} from './database';
+    pegarQuestoesQuizAptidao, pegarQuestoesQuiz, pegarIdQuiz, pegarNotaQuiz, pegarIdQuizApt, pegaIdTreinamento, pegaNomeEmpresa, pegaTodosAlunos} from './database';
 
 
 var connection = criarConexao();
@@ -264,6 +264,21 @@ app.get('/empresa/nome/:id', (req, res) => {
         res.set('Content-Type', 'application/json');
         if (err) {
             res.status(400).send("Não retornou o nome");
+        }
+        else {
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
+    });
+})
+
+//Pega o nome de todos os alunos
+app.get('/alunos', (req, res) => {
+    const comando = pegaTodosAlunos();
+    console.log(comando);
+    connection.query(comando, function (err, results) {            
+        res.set('Content-Type', 'application/json');
+        if (err) {
+            res.status(400).send("Problemas para achar os alunos");
         }
         else {
             res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
