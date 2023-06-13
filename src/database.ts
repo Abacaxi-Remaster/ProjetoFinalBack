@@ -135,11 +135,10 @@ export function pegaTodasVagasdeEmprego(id_aluno: String) {
 }
 
 //Pega o nome da empresa, para mostrar para os usuarios
-export function pegaNomeEmpresa(id_aluno: String) {
-    let comando = "SELECT * FROM vagas_de_emprego where id NOT IN (SELECT id_vaga FROM alunos_vagas where id_aluno = \"" + id_aluno + "\");";
+export function pegaNomeEmpresa(id_empresa: String) {
+    let comando = "SELECT nome FROM empresas where id = \"" + id_empresa + "\";";
     return comando;
 }
-
 
 // Mostra as vagas que o aluno está inscrito
 export function pegaAlunoVagas(id_aluno : string){

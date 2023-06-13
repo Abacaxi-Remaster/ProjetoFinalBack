@@ -6,7 +6,7 @@ import { inserirAluno, criarConexao, inserirEmpresas, inserirMentores, inserirTr
     pegaAlunoVagas, pegaVagaAlunos, inserirTreinamentosAlunos, pegaTreinamentosAlunos, procurarUsuario, 
     emailJaExiste, pegaTreinamentos, inserirHistoricoAlunos, inserirQuizAptidao, pegaVagasdeEmprego, 
     deletaTreinamentosAlunos, pegaGabaritoQuiz, deletaAlunoVaga, deletaVaga, deletaAlunosVaga, 
-    pegarQuestoesQuizAptidao, pegarQuestoesQuiz, pegarIdQuiz, pegarNotaQuiz, pegarIdQuizApt, pegaIdTreinamento} from './database';
+    pegarQuestoesQuizAptidao, pegarQuestoesQuiz, pegarIdQuiz, pegarNotaQuiz, pegarIdQuizApt, pegaIdTreinamento, pegaNomeEmpresa} from './database';
 
 
 var connection = criarConexao();
@@ -250,26 +250,23 @@ app.get('/vagas/:id', (req, res) => {
             res.status(400).send("Deu pau");
         }
         else {
-            res.status(200);
-            res.set('Content-Type', 'application/json');
-            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
         }
     });
 })
 
-app.get('/nome/empresa/:id', (req, res) => {
+//Pega o nome de um empresa especificica
+app.get('/empresa/nome/:id', (req, res) => {
     let id_empresa = req.params.id;
     const comando = pegaNomeEmpresa(id_empresa);
     console.log(comando);
     connection.query(comando, function (err, results) {            
         res.set('Content-Type', 'application/json');
         if (err) {
-            res.status(400).send("Deu pau");
+            res.status(400).send("Não retornou o nome");
         }
         else {
-            res.status(200);
-            res.set('Content-Type', 'application/json');
-            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+            res.status(200).send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
         }
     });
 })
