@@ -130,9 +130,16 @@ export function pegaHistoricoAlunos(id_aluno: String) {
 
 //Pega a vaga de emprego, para mostrar para os usuarios
 export function pegaTodasVagasdeEmprego(id_aluno: String) {
-    let comando = "SELECT * FROM vagas_de_emprego where id NOT IN (SELECT id_vaga FROM vagas_alunos where id_aluno = \"" + id_aluno + "\");";
+    let comando = "SELECT * FROM vagas_de_emprego where id NOT IN (SELECT id_vaga FROM alunos_vagas where id_aluno = \"" + id_aluno + "\");";
     return comando;
 }
+
+//Pega o nome da empresa, para mostrar para os usuarios
+export function pegaNomeEmpresa(id_aluno: String) {
+    let comando = "SELECT * FROM vagas_de_emprego where id NOT IN (SELECT id_vaga FROM alunos_vagas where id_aluno = \"" + id_aluno + "\");";
+    return comando;
+}
+
 
 // Mostra as vagas que o aluno está inscrito
 export function pegaAlunoVagas(id_aluno : string){
@@ -193,7 +200,6 @@ export function pegaIdTreinamento(id_quiz : string){
     let comando = "SELECT id_treinamentos FROM quiz where id = \"" + id_quiz + "\";";
     return comando;
 }  
-
 
 ///DELETE'S 
 

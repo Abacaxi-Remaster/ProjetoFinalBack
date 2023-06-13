@@ -257,6 +257,23 @@ app.get('/vagas/:id', (req, res) => {
     });
 })
 
+app.get('/nome/empresa/:id', (req, res) => {
+    let id_empresa = req.params.id;
+    const comando = pegaNomeEmpresa(id_empresa);
+    console.log(comando);
+    connection.query(comando, function (err, results) {            
+        res.set('Content-Type', 'application/json');
+        if (err) {
+            res.status(400).send("Deu pau");
+        }
+        else {
+            res.status(200);
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify(results)); // passamos o objeto para JSON e devolvemos.
+        }
+    });
+})
+
 //Insere um aluno e um vaga na tabela alunos_vagas
 app.post('/vagas/inscricao', (req, res) => {
     let body = req.body;
