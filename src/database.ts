@@ -190,7 +190,7 @@ export function pegarNotaQuiz(id_quiz : string){
 
 //Pega todas as questões de um quiz
 export function pegaIdTreinamento(id_quiz : string){
-    let comando = "SELECT id_treinamento FROM quiz where id = (SELECT id_quiz FROMquizAptidao where id_quiz = \"" + id_quiz + "\");";
+    let comando = "SELECT id_treinamentos FROM quiz where id = \"" + id_quiz + "\";";
     return comando;
 }  
 

@@ -368,17 +368,14 @@ app.get('/treinamentos/:id', (req, res) => {
 //Insere um aluno e um treinamento na tabela treinamentos_alunos
 app.post('/treinamento/cadastro', (req, res) => {
     let body = req.body;
-    console.log(body);
     let comando = pegaIdTreinamento(body.id_quiz);
-    console.log(comando);
     connection.query(comando, function (err, results) {            
         res.set('Content-Type', 'application/json');
         if (err) {
-            res.status(400).send("Erro ao procurar o id_quiz na tabela quizAptidao");
+            res.status(400).send("Erro ao procurar o id_quiz na tabela quiz");
         }
         else {
-            comando = inserirTreinamentosAlunos(body.id_aluno, results[0]);
-            console.log(comando);
+            comando = inserirTreinamentosAlunos(body.id_aluno, results[0].id_treinamentos);
             connection.query(comando, function (err, results) {            
                 if (err) {
                     res.status(400).send("Erro ao cadastra um aluno e um treinamento na tabela treinamentos_alunos");
