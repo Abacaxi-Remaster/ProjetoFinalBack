@@ -31,13 +31,17 @@ Este é um projeto para a disciplina de Projetos e Implementação de Aplicativo
 <br>
    lembre-se de utlizar o comando " npm install -g npm " no terminal de seu programa para instalar o ultima versão do NPM
 <br>
+
    Use o mesmo link para baixar -[Dump](https://1drv.ms/f/s!Ak_zu-M018s_hD7Tfon-dMbmx_fl?e=6K8LLx)
+   
   <p align="justify">
   --> Faça o mesmo procedimento de acesso e download do Noje.Js e o Mysql com o arquivo Dump
   --> Utilize o  arquivo Dump e o abra no Mysql para ter acesso as configurações e sistemas basicos do banco de dados, assim podendo utiliza-los.
 </p>
 <br>
+
   Utilize o link do próprio TypeScript- [TypeScript_Download](https://www.typescriptlang.org/download)
+  
   <p align="justify">
   --> No link do TypeScript (site oficial) há o passo a passo de como fazer o download do TypeScript tanto utilizando o npm quando o visual studio
 </p>
