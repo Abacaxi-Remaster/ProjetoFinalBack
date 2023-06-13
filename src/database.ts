@@ -129,8 +129,8 @@ export function pegaHistoricoAlunos(id_aluno: String) {
 }
 
 //Pega a vaga de emprego, para mostrar para os usuarios
-export function pegaTodasVagasdeEmprego(id_aluno: String) {
-    let comando = "SELECT * FROM vagas_de_emprego where id NOT IN (SELECT id_vaga FROM alunos_vagas where id_aluno = \"" + id_aluno + "\");";
+export function pegaTodasVagasdeEmprego() {
+    let comando = "SELECT * FROM vagas_de_emprego;";
     return comando;
 }
 

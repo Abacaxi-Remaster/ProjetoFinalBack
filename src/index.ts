@@ -28,12 +28,14 @@ const HOSTNAME = process.env.HOSTNAME || 'http://localhost'
 const app = express()
 // Faz com que o body da requisição http vire um json
 app.use(bodyParser.json());
+
+module.exports = app;
 // Endpoint raiz
 app.get('/', (req, res) => {
     let sql = "SELECT * FROM alunos";
     connection.query(sql, function (err: any, results: any) {
         if (err) throw err;
-        res.send(results);
+        res.send("Hello, World!");
     });
 })
 //Sucesso 
@@ -240,9 +242,8 @@ app.post('/vagas/deleta', (req, res) => {
 })
 
 //Retorna todas as vagas registradas 
-app.get('/vagas/:id', (req, res) => {
-    let id_aluno = req.params.id;
-    const comando = pegaTodasVagasdeEmprego(id_aluno);
+app.get('/vagas', (req, res) => {
+    const comando = pegaTodasVagasdeEmprego();
     console.log(comando);
     connection.query(comando, function (err, results) {            
         res.set('Content-Type', 'application/json');
